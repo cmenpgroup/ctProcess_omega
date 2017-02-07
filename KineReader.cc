@@ -18,6 +18,7 @@ KineReader::KineReader(TTree *tree)
     l_npip = b_kine->GetLeaf("nPip");
     l_npim = b_kine->GetLeaf("nPim");
     l_ngam = b_kine->GetLeaf("nGam");
+    l_nproton = b_kine->GetLeaf("nProton");
 }
 
 void KineReader::ReadEntry(int num)

@@ -44,6 +44,7 @@ class EG2Cuts
     bool cuts_omega_MPipPimPi0;
     bool cuts_omega_MPipPimPi0_sb;
     bool cuts_omega_dalitz;
+    bool cuts_omega_ProtonInEvt;
     bool cuts_omega_All;
     
     bool cuts_omega_woMPi0;
@@ -96,6 +97,7 @@ public:
     bool Check_OpAng_ElecPhoton(double OpAng);
     bool Check_Wcut(double W);
     bool Check_NumDetPart(int nElec, int nPim, int nPip, int nGam);
+    bool Check_ProtonInEvt(int nProton);
     bool Check_ElectronR(double vr);
     bool Check_BetaPhoton(double beta);
     bool Check_MassOmega(double mass);
@@ -127,6 +129,8 @@ public:
     bool GetCut_Wcut() {return cuts_omega_W;};
     void SetCut_NumDetPart(int nElec, int nPim, int nPip, int nGam);
     bool GetCut_NumDetPart() {return cuts_omega_NumDetPart;};
+    void SetCut_ProtonInEvt(int nProton);
+    bool GetCut_ProtonInEvt() {return cuts_omega_ProtonInEvt;};
     void SetCut_MassOmega(double mass);
     bool GetCut_MassOmega() {return cuts_omega_MPipPimPi0;};
     void SetCut_MassOmega_sb(double mass);

@@ -267,6 +267,7 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
         myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nPim(), myDetPart.Get_PartIndex("Pi-"));
         myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nPip(), myDetPart.Get_PartIndex("Pi+"));
         myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nGam(), myDetPart.Get_PartIndex("Photon1"));
+        myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nProton(), myDetPart.Get_PartIndex("Proton"));
         
         // plots of z vertex difference between scattered electron and other decay particle
 		myHistManager.GetZVertDiff()->Fill(elecNPionZVertDiff,myDetPart.Get_PartIndex("Pi-"));
@@ -554,7 +555,7 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
                 myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),8);
             }
             myCuts.SetCut_OmegaID_woNumDetPart();
-            if(myCuts.GetCut_OmegaID_woNumDetPart()){ // applying all cuts except the e-,photon opening angle
+            if(myCuts.GetCut_OmegaID_woNumDetPart()){
                 myHistManager.GetIMOmega_woCut(Vz_index)->Fill(Omega.M(),8);
                 myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),8);
             }
@@ -617,6 +618,16 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
                 myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),15);
                 myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),15);
             }
+
+            myCuts.SetCut_ProtonInEvt(myKineReader.Get_nProton());
+            if(myCuts.GetCut_ProtonInEvt()){
+                myCounter.Increment("Omega ID (ProtonInEvt)");
+                myHistManager.GetIM2Photons(Vz_index)->Fill(TwoPhoton.M(),17);
+                myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),17);
+            }else{
+                myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),17);
+                myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),17);
+            }
             
             myHistManager.GetMsq_ChPions_VS_TwoPhotons(Vz_index)->Fill(TwoPhoton.M2(), TwoPion.M2());
             
@@ -664,6 +675,14 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
                     myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),16);
                 }else{
                     myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),16);
+                }
+                
+                if(myCuts.GetCut_ProtonInEvt()){ // applying all omega cuts and the proton-in-event cut
+                    myHistManager.GetIM2Photons(Vz_index)->Fill(TwoPhoton.M(),18);
+                    myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),18);
+                }else{
+                    myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),18);
+                    myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),18);
                 }
                 
                 myHistManager.GetRFmom_VS_IMOmega_AllCuts(Vz_index)->Fill((nPion_RF+pPion_RF+TwoPhoton_RF).P(),Omega.M());

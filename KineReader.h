@@ -25,6 +25,7 @@ class KineReader
     TLeaf *l_npip;
     TLeaf *l_npim;
     TLeaf *l_ngam;
+    TLeaf *l_nproton;
     
 public:
     KineReader(TTree *tree);
@@ -42,5 +43,6 @@ public:
     int Get_nPip() {return l_npip->GetValue();};
     int Get_nPim() {return l_npim->GetValue();};
     int Get_nGam() {return l_ngam->GetValue();};
+    int Get_nProton() {return l_nproton->GetValue();};
 };
 #endif

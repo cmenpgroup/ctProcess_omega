@@ -9,6 +9,7 @@ DetectedParticles::DetectedParticles()
 	DetPartLabel.push_back("Pi+");
 	DetPartLabel.push_back("Photon1");
 	DetPartLabel.push_back("Photon2");
+	DetPartLabel.push_back("Proton");
 }
 
 int DetectedParticles::Get_nDetPartLabel() {

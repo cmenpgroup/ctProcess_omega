@@ -18,6 +18,7 @@ EG2Cuts::EG2Cuts()
     CutsLabel.push_back("MassOmega");
     CutsLabel.push_back("MassOmega_sideband");
     CutsLabel.push_back("Dalitz");
+    CutsLabel.push_back("ProtonInEvt");
     
     topo_nelec = 1;
     topo_npim = 1;
@@ -259,6 +260,20 @@ bool EG2Cuts::Check_NumDetPart(int nElec, int nPim, int nPip, int nGam)
 void EG2Cuts::SetCut_NumDetPart(int nElec, int nPim, int nPip, int nGam)
 {
     cuts_omega_NumDetPart = this->Check_NumDetPart(nElec,nPim,nPip,nGam);
+}
+
+// check the cut if there is a proton in the event
+bool EG2Cuts::Check_ProtonInEvt(int nProton)
+{
+    bool ret = (nProton > 0) ? true : false;
+    
+    return ret;
+}
+
+// set the value of the cut with a proton in the event
+void EG2Cuts::SetCut_ProtonInEvt(int nProton)
+{
+    cuts_omega_ProtonInEvt = this->Check_ProtonInEvt(nProton);
 }
 
 // check the cut on omega mass

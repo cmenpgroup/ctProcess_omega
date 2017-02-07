@@ -45,7 +45,7 @@ void HistManager::BookHist()
     double PtSq_omegaLo = 0.0;
     double PtSq_omegaHi = 2.0;
     
-    int nCuts = 17;
+    int nCuts = 19;
     double CutsLo = -0.5;
     double CutsHi = nCuts + CutsLo;
     
