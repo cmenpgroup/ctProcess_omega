@@ -2,6 +2,8 @@
 #define EG2CUTS_H
 #include <vector>
 #include <string>
+#include <iostream>
+#include <stdlib.h>
 
 using namespace std;
 
