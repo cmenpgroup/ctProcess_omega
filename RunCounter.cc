@@ -32,6 +32,7 @@ RunCounter::RunCounter()
     CtrLabel.push_back("Omega ID (OpAngElectron)");
     CtrLabel.push_back("Omega ID (NumDetPart)");
     CtrLabel.push_back("Omega ID (ProtonInEvt)");
+    CtrLabel.push_back("Omega ID (PartComb)");
     
     this->Init();
 }

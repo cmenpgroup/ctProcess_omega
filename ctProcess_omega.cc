@@ -263,6 +263,8 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
         myHistManager.GetHW(Vz_index)->Fill(W); // histogram for W
         myHistManager.GetZ_fracE(Vz_index)->Fill(z_fracEnergy); // histogram for fractional z
 
+        myHistManager.GetPartComb()->Fill(myKineReader.Get_PartComb());
+        
         myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nElec(), myDetPart.Get_PartIndex("Electron"));
         myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nPim(), myDetPart.Get_PartIndex("Pi-"));
         myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nPip(), myDetPart.Get_PartIndex("Pi+"));
@@ -628,7 +630,17 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
                 myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),17);
                 myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),17);
             }
-            
+
+            myCuts.SetCut_PartComb(myKineReader.Get_PartComb());
+            if(myCuts.GetCut_PartComb()){
+                myCounter.Increment("Omega ID (PartComb)");
+                myHistManager.GetIM2Photons(Vz_index)->Fill(TwoPhoton.M(),19);
+                myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),19);
+            }else{
+                myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),19);
+                myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),19);
+            }
+
             myHistManager.GetMsq_ChPions_VS_TwoPhotons(Vz_index)->Fill(TwoPhoton.M2(), TwoPion.M2());
             
              // applying all cuts
@@ -685,6 +697,15 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
                     myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),18);
                 }
                 
+                myHistManager.GetPartComb_omega()->Fill(myKineReader.Get_PartComb());
+                if(myCuts.GetCut_PartComb()){ // applying all omega cuts and the particle combination cut
+                    myHistManager.GetIM2Photons(Vz_index)->Fill(TwoPhoton.M(),20);
+                    myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),20);
+                }else{
+                    myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),20);
+                    myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),20);
+                }
+                
                 myHistManager.GetRFmom_VS_IMOmega_AllCuts(Vz_index)->Fill((nPion_RF+pPion_RF+TwoPhoton_RF).P(),Omega.M());
                 myHistManager.GetRFinplane_VS_IMOmega_AllCuts(Vz_index)->Fill(inPlane_3pions,Omega.M());
                 
@@ -701,6 +722,49 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
                 if(myCuts.GetCut_MassOmega_sb()){
                     myHistManager.GetPtSq_Omega_AllCuts_IMOmegaSBCut(Vz_index)->Fill(Omega.Perp2());
                 }
+                
+                // Invariant mass diferences
+                myHistManager.GetMassDiff(Vz_index)->Fill(Omega.M()-TwoPion.M()-TwoPhoton.M(),0); // Omega - TwoPion TwoPhoton
+                myHistManager.GetMassDiff(Vz_index)->Fill(Omega.M()-TwoPion.M(),1); // Omega - TwoPion
+                myHistManager.GetMassDiff(Vz_index)->Fill(Omega.M()-pipPi0.M(),2); // Omega - PipPi0
+                myHistManager.GetMassDiff(Vz_index)->Fill(Omega.M()-pimPi0.M(),3); // Omega - PimPi0
+                myHistManager.GetMassDiff(Vz_index)->Fill(Omega.M()-pPion.M(),4); // Omega - Pip
+                myHistManager.GetMassDiff(Vz_index)->Fill(Omega.M()-nPion.M(),5); // Omega - Pim
+                myHistManager.GetMassDiff(Vz_index)->Fill(Omega.M()-TwoPhoton.M(),6); //  Omega - TwoPhoton
+                myHistManager.GetMassDiff(Vz_index)->Fill(Omega.M()-TwoPhoton.M()-pPion.M()-nPion.M(),7); //  Omega - TwoPhoton - Pip - Pim
+                
+                // Invariant mass squared difference
+                myHistManager.GetMsqDiff(Vz_index)->Fill(Omega.M2()-TwoPion.M2()-TwoPhoton.M2(),0); // Omega - TwoPion TwoPhoton
+                myHistManager.GetMsqDiff(Vz_index)->Fill(Omega.M2()-TwoPion.M2(),1); // Omega - TwoPion
+                myHistManager.GetMsqDiff(Vz_index)->Fill(Omega.M2()-pipPi0.M2(),2); // Omega - PipPi0
+                myHistManager.GetMsqDiff(Vz_index)->Fill(Omega.M2()-pimPi0.M2(),3); // Omega - PimPi0
+                myHistManager.GetMsqDiff(Vz_index)->Fill(Omega.M2()-pPion.M2(),4); // Omega - Pip
+                myHistManager.GetMsqDiff(Vz_index)->Fill(Omega.M2()-nPion.M2(),5); // Omega - Pim
+                myHistManager.GetMsqDiff(Vz_index)->Fill(Omega.M2()-TwoPhoton.M2(),6); //  Omega - TwoPhoton
+                myHistManager.GetMsqDiff(Vz_index)->Fill(Omega.M2()-TwoPhoton.M2()-pPion.M2()-nPion.M2(),7); //  Omega - TwoPhoton - Pip - Pim
+                
+                // invariant mass difference vs omega invariant mass
+                myHistManager.GetMassDiff_VS_IMOmega(Vz_index,0)->Fill(Omega.M(),Omega.M()-TwoPion.M()-TwoPhoton.M()); // Omega - TwoPion TwoPhoton
+                myHistManager.GetMassDiff_VS_IMOmega(Vz_index,1)->Fill(Omega.M(),Omega.M()-TwoPion.M()); // Omega - TwoPion
+                myHistManager.GetMassDiff_VS_IMOmega(Vz_index,2)->Fill(Omega.M(),Omega.M()-pipPi0.M()); // Omega - PipPi0
+                myHistManager.GetMassDiff_VS_IMOmega(Vz_index,3)->Fill(Omega.M(),Omega.M()-pimPi0.M()); // Omega - PimPi0
+                myHistManager.GetMassDiff_VS_IMOmega(Vz_index,4)->Fill(Omega.M(),Omega.M()-pPion.M()); // Omega - Pip
+                myHistManager.GetMassDiff_VS_IMOmega(Vz_index,5)->Fill(Omega.M(),Omega.M()-nPion.M()); // Omega - Pim
+                myHistManager.GetMassDiff_VS_IMOmega(Vz_index,6)->Fill(Omega.M(),Omega.M()-TwoPhoton.M()); //  Omega - TwoPhoton
+                myHistManager.GetMassDiff_VS_IMOmega(Vz_index,7)->Fill(Omega.M(),Omega.M()-TwoPhoton.M()-pPion.M()-nPion.M()); //  Omega - TwoPhoton - Pip - Pim
+                
+                myHistManager.GetZh_VS_IMOmega(Vz_index)->Fill(Omega.M(),z_fracEnergy); // Omega inv. mass vs z_h
+                
+                // invariant mass difference vs omega invariant mass
+                myHistManager.GetMassDiff_VS_Zh(Vz_index,0)->Fill(z_fracEnergy,Omega.M()-TwoPion.M()-TwoPhoton.M()); // Omega - TwoPion TwoPhoton
+                myHistManager.GetMassDiff_VS_Zh(Vz_index,1)->Fill(z_fracEnergy,Omega.M()-TwoPion.M()); // Omega - TwoPion
+                myHistManager.GetMassDiff_VS_Zh(Vz_index,2)->Fill(z_fracEnergy,Omega.M()-pipPi0.M()); // Omega - PipPi0
+                myHistManager.GetMassDiff_VS_Zh(Vz_index,3)->Fill(z_fracEnergy,Omega.M()-pimPi0.M()); // Omega - PimPi0
+                myHistManager.GetMassDiff_VS_Zh(Vz_index,4)->Fill(z_fracEnergy,Omega.M()-pPion.M()); // Omega - Pip
+                myHistManager.GetMassDiff_VS_Zh(Vz_index,5)->Fill(z_fracEnergy,Omega.M()-nPion.M()); // Omega - Pim
+                myHistManager.GetMassDiff_VS_Zh(Vz_index,6)->Fill(z_fracEnergy,Omega.M()-TwoPhoton.M()); //  Omega - TwoPhoton
+                myHistManager.GetMassDiff_VS_Zh(Vz_index,7)->Fill(z_fracEnergy,Omega.M()-TwoPhoton.M()-pPion.M()-nPion.M()); //  Omega - TwoPhoton - Pip - Pim
+                
             }else{
                 myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),1);
             }

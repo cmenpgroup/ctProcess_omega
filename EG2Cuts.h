@@ -24,7 +24,9 @@ class EG2Cuts
     int topo_npim;
     int topo_npip;
     int topo_ngam;
-    
+
+    int evt_partcomb;
+
     double dalitzParentMass;
     double dalitzDaughter1Mass;
     double dalitzDaughter2Mass;
@@ -45,6 +47,7 @@ class EG2Cuts
     bool cuts_omega_MPipPimPi0_sb;
     bool cuts_omega_dalitz;
     bool cuts_omega_ProtonInEvt;
+    bool cuts_omega_PartComb;
     bool cuts_omega_All;
     
     bool cuts_omega_woMPi0;
@@ -98,6 +101,7 @@ public:
     bool Check_Wcut(double W);
     bool Check_NumDetPart(int nElec, int nPim, int nPip, int nGam);
     bool Check_ProtonInEvt(int nProton);
+    bool Check_PartComb(int PartComb);
     bool Check_ElectronR(double vr);
     bool Check_BetaPhoton(double beta);
     bool Check_MassOmega(double mass);
@@ -131,6 +135,10 @@ public:
     bool GetCut_NumDetPart() {return cuts_omega_NumDetPart;};
     void SetCut_ProtonInEvt(int nProton);
     bool GetCut_ProtonInEvt() {return cuts_omega_ProtonInEvt;};
+    int Get_Evt_PartComb() {return evt_partcomb;};
+    void Set_Evt_PartComb(int PartComb) {evt_partcomb = PartComb;};
+    void SetCut_PartComb(int PartComb);
+    bool GetCut_PartComb() {return cuts_omega_PartComb;};
     void SetCut_MassOmega(double mass);
     bool GetCut_MassOmega() {return cuts_omega_MPipPimPi0;};
     void SetCut_MassOmega_sb(double mass);

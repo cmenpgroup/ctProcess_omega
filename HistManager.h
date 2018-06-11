@@ -34,7 +34,14 @@ private:
 
     double BEAM_ENERGY; // electron beam energy in GeV
 
+    static const Int_t MAX_DETPART = 6; // should match with DetPartLabel in DetectedParticle.cc
+    static const Int_t MAX_MASSDIFF = 8; // mass difference combinations a la CERN
+    
+    vector<string> MassDiffLabel;
+    
     TH1D *q2;
+    TH1D *partcomb;
+    TH1D *partcomb_omega;
     TH2D *NumDetPart;
     TH2D *q2_VS_theta;
     TH1D *StartTime;
@@ -46,11 +53,11 @@ private:
     TH2D *Xvert;
     TH2D *Yvert;
     TH2D *ZVertDiff;
-    TH2D *Xvert_VS_Yvert[5];
+    TH2D *Xvert_VS_Yvert[MAX_DETPART];
     TH2D *Beta_VS_Momentum;
     TH2D *Beta_VS_Momentum_Recalc;
-    TH2D *dBeta_VS_Momentum[5];
-    TH2D *dBeta_VS_Momentum_EPC[5];
+    TH2D *dBeta_VS_Momentum[MAX_DETPART];
+    TH2D *dBeta_VS_Momentum_EPC[MAX_DETPART];
     TH2D *Beta_Recalc;
     TH2D *scMassSquared_NC;
     TH2D *scMassSquared_EC;
@@ -72,12 +79,12 @@ private:
     TH2D *EChit_M3_cuts;
     TH2D *EChit_M4_cuts;
     TH2D *dtime_ECSC;
-    TH2D *ECtot_VS_P[5];
-    TH2D *ECtotP_VS_P[5];
-    TH2D *ECin_VS_ECout[5];
-    TH2D *EChit_M2_VS_scMsq[5];
-    TH2D *EChit_M3_VS_scMsq[5];
-    TH2D *EChit_M4_VS_scMsq[5];
+    TH2D *ECtot_VS_P[MAX_DETPART];
+    TH2D *ECtotP_VS_P[MAX_DETPART];
+    TH2D *ECin_VS_ECout[MAX_DETPART];
+    TH2D *EChit_M2_VS_scMsq[MAX_DETPART];
+    TH2D *EChit_M3_VS_scMsq[MAX_DETPART];
+    TH2D *EChit_M4_VS_scMsq[MAX_DETPART];
     
     TH2D *Mom_elecID;
     TH2D *CCnphe_elecID;
@@ -238,11 +245,26 @@ private:
     TH2D *mass2Pions_VS_massOmega_EPC[3];
     TH2D *mass2Pions_VS_massOmega_EPOC[3];
     
+    // mass differences
+    TH2D *MassDiff[3];
+    TH2D *MsqDiff[3];
+    TH2D *MassDiff_VS_IMOmega[3][MAX_MASSDIFF];
+    
+    // omega inv. mass vs z_h
+    TH2D *Zh_VS_IMOmega[3];
+    TH2D *MassDiff_VS_Zh[3][MAX_MASSDIFF];
+    
 public:
     HistManager();
     void BookHist();
     void WriteHist(string RootFile);
+    
+    int Get_nMassDiffLabel() { return MassDiffLabel.size(); };
+    string Get_MassDiffLabel(int num) { return MassDiffLabel[num]; };
+    
     TH1D* GetQ2() { return q2; };
+    TH1D* GetPartComb() { return partcomb; };
+    TH1D* GetPartComb_omega() { return partcomb_omega; };
     TH2D* GetNumDetPart() { return NumDetPart; };
     TH2D* GetQ2_VS_theta() { return q2_VS_theta; };
     TH1D* GetStartTime() { return StartTime; };
@@ -445,7 +467,16 @@ public:
     TH2D* GetMass2Pions_VS_massOmega_NC(int index) { return mass2Pions_VS_massOmega_NC[index]; };
     TH2D* GetMass2Pions_VS_massOmega_EPC(int index) { return mass2Pions_VS_massOmega_EPC[index]; };
     TH2D* GetMass2Pions_VS_massOmega_EPOC(int index) { return mass2Pions_VS_massOmega_EPOC[index]; };
-
+    
+    // mass diferences
+    TH2D* GetMassDiff(int index) { return MassDiff[index]; };
+    TH2D* GetMsqDiff(int index) { return MsqDiff[index]; };
+    TH2D* GetMassDiff_VS_IMOmega(int index, int MDindex) { return MassDiff_VS_IMOmega[index][MDindex]; };
+    
+    // Zh vs omega inv. mass
+    TH2D* GetZh_VS_IMOmega(int index) {return Zh_VS_IMOmega[index]; };
+    TH2D* GetMassDiff_VS_Zh(int index, int MDindex) { return MassDiff_VS_Zh[index][MDindex]; };
+    
     int GetMAX_SECTORS() { return MAX_SECTORS; };
     int GetID_ELECTRON() { return ID_ELECTRON; };
     int GetID_PHOTON() { return ID_PHOTON; };

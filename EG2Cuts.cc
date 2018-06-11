@@ -19,11 +19,14 @@ EG2Cuts::EG2Cuts()
     CutsLabel.push_back("MassOmega_sideband");
     CutsLabel.push_back("Dalitz");
     CutsLabel.push_back("ProtonInEvt");
+    CutsLabel.push_back("PartComb");
     
     topo_nelec = 1;
     topo_npim = 1;
     topo_npip = 1;
     topo_ngam = 2;
+    
+    evt_partcomb = 11112; // particle combination of 1st e-, 1st pi+, 1st pi-, 1st photon, and 2nd photon in list
     
     RangeZDiff_ElecPim.push_back(-2.0); // Lower limit on z vertex difference with electron (in cm)
     RangeZDiff_ElecPim.push_back(2.0); // Upper limit on z vertex difference with electron (in cm)
@@ -77,6 +80,9 @@ void EG2Cuts::InitCuts()
     cuts_omega_MPipPim = false;
     cuts_omega_MPipPimPi0 = false;
     cuts_omega_MPipPimPi0_sb = false;
+    cuts_omega_dalitz = false;
+    cuts_omega_ProtonInEvt = false;
+    cuts_omega_PartComb = false;
     cuts_omega_All = false;
 
     cuts_omega_woMPi0 = false;
@@ -87,8 +93,6 @@ void EG2Cuts::InitCuts()
     cuts_omega_woMPipPim = false;
     cuts_omega_woNumDetPart = false;
     cuts_omega_woOpAng_ElecPhot = false;
-    
-    cuts_omega_dalitz = false;
 }
 
 // check the cut on the difference in z vertex between e- and pi-
@@ -274,6 +278,20 @@ bool EG2Cuts::Check_ProtonInEvt(int nProton)
 void EG2Cuts::SetCut_ProtonInEvt(int nProton)
 {
     cuts_omega_ProtonInEvt = this->Check_ProtonInEvt(nProton);
+}
+
+// check the cut for particle combination
+bool EG2Cuts::Check_PartComb(int PartComb)
+{
+    bool ret = (PartComb==this->Get_Evt_PartComb()) ? true : false;
+    
+    return ret;
+}
+
+// set the value of the cut for particle combination
+void EG2Cuts::SetCut_PartComb(int PartComb)
+{
+    cuts_omega_PartComb = this->Check_PartComb(PartComb);
 }
 
 // check the cut on omega mass
