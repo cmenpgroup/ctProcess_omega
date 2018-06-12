@@ -35,10 +35,10 @@ HistManager myHistManager; // declare the histogram manager
 RunCounter myCounter; // declare the counters
 
 bool Analyze_PipPim(PartReader pimReader, PartReader pipReader);
-bool Analyze_Photons(PartReader photon1Reader, PartReader photon2Reader);
+bool Analyze_Photons(PartReader photon1Reader, PartReader photon2Reader, int iSim);
 bool Analyze_Electron(PartReader elecReader, double Qsq, double targMass);
 int GetSectorByPhi(double phi_rad);
-int process (string inFile, int MaxEvents, int dEvents, int targMass);
+int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, bool printCuts);
 void PrintUsage(char *processName);
 void PrintAnalysisTime(float tStart, float tStop);
 int CheckCut(double var, double LowerLimit, double UpperLimit);

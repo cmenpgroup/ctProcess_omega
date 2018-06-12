@@ -3,9 +3,11 @@
 #include <string>
 #include "PhotonID.h"
 #include <iostream>
-PhotonID::PhotonID()
+PhotonID::PhotonID(int inputSim)
 {
     this->InitCuts(); // initialize the photon cuts
+    
+    this->Set_IsSim(inputSim); // initialize the simulation flag
     
     PhotonIDLabel.push_back("No Cuts");
     PhotonIDLabel.push_back("Momentum");
@@ -98,6 +100,13 @@ void PhotonID::InitCuts()
     cuts_photID2_ECinTimesECout = false;
     cuts_photID_ECinTimesECout = false;
     cuts_photID = false;
+}
+
+// set the value of data or simulation type
+// Variable bData is set by the user
+void PhotonID::Set_IsSim(int inputSim)
+{
+    isSim = inputSim;
 }
 
 // check the cut on Photon momentum
@@ -340,9 +349,10 @@ bool PhotonID::Check_PhotonTiming(double dt, int num)
 // set the value of the timing cut for individual photons
 void PhotonID::SetCut_PhotonTiming(double dt, int num)
 {
+    bool tempCheck = (this->Get_IsSim() == 0) ? this->Check_PhotonTiming(dt,num) : true;
     switch (num) {
-        case 1: cuts_photID1_time = this->Check_PhotonTiming(dt,num); break;
-        case 2: cuts_photID2_time = this->Check_PhotonTiming(dt,num); break;
+        case 1: cuts_photID1_time = tempCheck; break;
+        case 2: cuts_photID2_time = tempCheck; break;
         default:
             cout<<"PhotonID::SetCut_PhotonECw, Wrong photon number "<<num<<endl;
             break;

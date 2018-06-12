@@ -8,7 +8,7 @@
 
 #include "ctProcess_omega.h"
 
-int process (string inFile, int MaxEvents, int dEvents, int targMass, bool printCuts) {
+int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, bool printCuts) {
     int i, ii, j, k, kk;
     
     int Sector_index, Vz_index;
@@ -25,7 +25,7 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
     
     double eventStartTime; // event start time from HEAD bank
     
-    PhotonID tempPhotID;
+    PhotonID tempPhotID{iSim};
     DetectedParticles myDetPart;
     EG2Target myTgt;
     EG2Cuts myCuts;
@@ -334,7 +334,7 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, bool print
         cuts_Electron = Analyze_Electron(elecReader, Qsq, targMass); // electron analysis
 
         cuts_Photons = false; // initialize the photon pair cut
-        cuts_Photons = Analyze_Photons(photon1Reader, photon2Reader); // photon pair analysis
+        cuts_Photons = Analyze_Photons(photon1Reader, photon2Reader,iSim); // photon pair analysis
         
         double emSCMassSq = elecReader.Get_TOF_MassSquared(); //calculate the TOF mass-squared for e-
         double pimSCMassSq = pimReader.Get_TOF_MassSquared(); // calculate the TOF mass-squared for pi-
@@ -941,9 +941,9 @@ bool Analyze_PipPim(PartReader pimReader, PartReader pipReader)
 }
 
 // Photon pair ID
-bool Analyze_Photons(PartReader photon1Reader, PartReader photon2Reader)
+bool Analyze_Photons(PartReader photon1Reader, PartReader photon2Reader, int iSim)
 {
-    PhotonID myPhotID;
+    PhotonID myPhotID{iSim};
     EC_geometry myECgeom;
     
     double eventStartTime = 0.0; // event start time from HEAD bank
@@ -1293,6 +1293,7 @@ void PrintUsage(char *processName)
     cerr << "\t-M#\t\tprocess maximum # of events.\n";
     cerr << "\t-D#\t\tinform user when # of events have been processed (def. = 1000).\n";
     cerr << "\t-T#\t\tTarget mass number\n";
+    cerr << "\t-S#\t\tSelect data or simualtion (0=data (def.), 1=generated sim., 2=reconstructed sim.)\n";
     cerr << "\t-i\t\tquiet mode (no counter).\n";
     cerr << "\t-h\t\tprint the above" << endl;
 }
@@ -1340,6 +1341,7 @@ int main (int argc, char **argv) {
     int TotEvents;
     
     int targMass = 2; // mass number for target
+    int iSim = 0;  // 0 = data, 1 = generated simulation, 2 = reconstructed simulation
     
     bool bBatchMode = false;    // events counter is on by default
     bool printCuts = true; // print the cut parameters
@@ -1350,12 +1352,13 @@ int main (int argc, char **argv) {
     float timeStart = clock(); // start time
     
     for (i = 0; i < argc; ++i) cerr << argv[i] << " "; cerr << endl;
-    while ((c = getopt(argc,argv, "o:M:D:T:ih")) != -1 ) {
+    while ((c = getopt(argc,argv, "o:M:D:T:S:ih")) != -1 ) {
         switch (c) {
             case 'o': outFile = optarg; break;
             case 'M': MaxEvents = atoi(optarg); break;
             case 'D': dEvents = atoi(optarg); break;
             case 'T': targMass = atoi(optarg); break;
+            case 'S': iSim = atoi(optarg); break;
             case 'i': bBatchMode = true; break;
             case 'h':
                 PrintUsage(argv[0]);
@@ -1370,6 +1373,12 @@ int main (int argc, char **argv) {
         }
     }
   
+    if(iSim<0 || iSim>2){
+        cout<<"Unrecognized value for data/simulation type -S"<<iSim<<endl;
+        cout<<"Goodbye!"<<endl;
+        exit(0);
+    }
+        
     myCounter.Init(); // zero out the counters
     
     myHistManager.BookHist(); // declare histograms
@@ -1379,7 +1388,7 @@ int main (int argc, char **argv) {
         if (inFile != '-') { // we have a file to process
             cout << "Analyzing file " << inFile << endl; // let user know which file is being processed
             // process the root file and return number of processed events
-            TotEvents = process(inFile,MaxEvents,dEvents,targMass,printCuts);
+            TotEvents = process(inFile,MaxEvents,dEvents,targMass,iSim,printCuts);
             cout<<TotEvents<<" events processed"<<endl; // print out stats
             printCuts = false;
         }

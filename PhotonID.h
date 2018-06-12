@@ -19,6 +19,8 @@ class PhotonID
     vector<double> RangeTiming2;
     vector<double> RangePhotonECinTimesECout;
     
+    int isSim; // flag to indicate whether data or simulation
+
     bool cuts_photID1_mom;
     bool cuts_photID2_mom;
     bool cuts_photID_mom;
@@ -46,7 +48,7 @@ class PhotonID
     bool cuts_photID;
     
 public:
-    PhotonID();
+    PhotonID(int inputSim);
     int Get_nPhotonID() {return PhotonIDLabel.size();};
     string Get_PhotonIDLabel(int num) {return PhotonIDLabel[num];};
     double Get_PhotonMom_lo() {return RangePhotonMom[0];};
@@ -110,6 +112,9 @@ public:
     bool GetCut_PhotonMom_All() {return cuts_photID_mom;};
     bool GetCut_PhotonMom(int num);
     void SetCut_PhotonMom(double mom, int num);
+    
+    int Get_IsSim() {return isSim;};
+    void Set_IsSim(int inputSim);
     
     void Print_PhotonID();
 };
