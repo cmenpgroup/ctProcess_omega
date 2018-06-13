@@ -25,7 +25,7 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
     
     double eventStartTime; // event start time from HEAD bank
     
-    PhotonID tempPhotID{iSim};
+    PhotonID tempPhotID(iSim);
     DetectedParticles myDetPart;
     EG2Target myTgt;
     EG2Cuts myCuts;
@@ -943,7 +943,7 @@ bool Analyze_PipPim(PartReader pimReader, PartReader pipReader)
 // Photon pair ID
 bool Analyze_Photons(PartReader photon1Reader, PartReader photon2Reader, int iSim)
 {
-    PhotonID myPhotID{iSim};
+    PhotonID myPhotID(iSim);
     EC_geometry myECgeom;
     
     double eventStartTime = 0.0; // event start time from HEAD bank
