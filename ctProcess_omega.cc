@@ -927,7 +927,7 @@ bool Analyze_PipPim(PartReader pimReader, PartReader pipReader)
     myChPionID.SetCut_ChargedPionPair();
     if(myChPionID.GetCut_ChargedPionPair()){
         myCounter.Increment("Charged Pion ID (All)");
-
+//
         myHistManager.GetEChit_M2_VS_scMsq(1)->Fill(pimEChit_M2,pimSCMassSq);
         myHistManager.GetEChit_M3_VS_scMsq(1)->Fill(pimEChit_M3,pimSCMassSq);
         myHistManager.GetEChit_M4_VS_scMsq(1)->Fill(pimEChit_M4,pimSCMassSq);
