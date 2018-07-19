@@ -38,7 +38,7 @@ HistManager::HistManager()
 //
 // BookHist - routine to set up histograms
 //
-void HistManager::BookHist()
+void HistManager::BookHist(int inputSim)
 {
 
     int i, j, k;
@@ -78,7 +78,7 @@ void HistManager::BookHist()
     ParticleList myPartList;
     EG2Target myTgt;
     OmegaMixedEvent myMixEvt;
-    ElectronID myElecID;
+    ElectronID myElecID(inputSim);
     
     int nDetPart = myDetPart.Get_nDetPartLabel();
     double DetPartLo = -0.5;
@@ -933,14 +933,14 @@ void HistManager::BookHist()
 //
 // WriteHist - routine to write histograms to the output file
 //
-void HistManager::WriteHist(string RootFile){
+void HistManager::WriteHist(string RootFile, int inputSim){
     
     int i, j, k;
     
     DetectedParticles myDetPart;
     ParticleList myPartList;
     EG2Target myTgt;
-    ElectronID myElecID;
+    ElectronID myElecID(inputSim);
     
 	TFile *out = new TFile(RootFile.c_str(), "recreate");
 	out->cd();

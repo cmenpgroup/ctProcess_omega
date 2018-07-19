@@ -103,7 +103,6 @@ void PhotonID::InitCuts()
 }
 
 // set the value of data or simulation type
-// Variable bData is set by the user
 void PhotonID::Set_IsSim(int inputSim)
 {
     isSim = inputSim;
@@ -294,13 +293,10 @@ bool PhotonID::GetCut_PhotonECw(int num)
 // set the value of the EC fid. cut (U, V, W) for individual photons
 void PhotonID::SetCut_PhotonECfid(int num)
 {
-    bool fidU = this->GetCut_PhotonECu(num);
-    bool fidV = this->GetCut_PhotonECv(num);
-    bool fidW = this->GetCut_PhotonECw(num);
-    
+    bool tempCheck = (this->Get_IsSim() == 0) ? (this->GetCut_PhotonECu(num) &&  this->GetCut_PhotonECv(num) && this->GetCut_PhotonECw(num)) : true;
     switch (num) {
-        case 1: cuts_photID1_fid = (fidU && fidV && fidW); break;
-        case 2: cuts_photID2_fid = (fidU && fidV && fidW); break;
+        case 1: cuts_photID1_fid = tempCheck; break;
+        case 2: cuts_photID2_fid = tempCheck; break;
         default:
             cout<<"PhotonID::SetCut_PhotonECfid, Wrong photon number "<<num<<endl;
             break;

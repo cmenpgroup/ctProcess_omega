@@ -3,8 +3,11 @@
 #include <string>
 #include "ElectronID.h"
 #include <iostream>
-ElectronID::ElectronID()
+ElectronID::ElectronID(int inputSim)
 {
+    
+    this->Set_IsSim(inputSim); // initialize the simulation flag
+    
     elecIDLabel.push_back("No Cuts");
     elecIDLabel.push_back("Momentum");
     elecIDLabel.push_back("EC U-view");
@@ -121,6 +124,12 @@ void ElectronID::InitCuts()
     cuts_ElecID_ECinP_ECoutP = false;
 }
 
+// set the value of data or simulation type
+void ElectronID::Set_IsSim(int inputSim)
+{
+    isSim = inputSim;
+}
+
 // check the cut on electron momentum
 bool ElectronID::Check_ElecMom(double mom)
 {
@@ -162,7 +171,7 @@ bool ElectronID::Check_ElecECw(double ecw)
 // set the EC fid. cut
 void ElectronID::SetCut_ElecECfid(double ecu, double ecv, double ecw)
 {
-    cuts_ElecID_ECfid = (this->Check_ElecECu(ecu) && this->Check_ElecECv(ecv) && this->Check_ElecECw(ecw));
+    cuts_ElecID_ECfid = (this->Get_IsSim() == 0) ? (this->Check_ElecECu(ecu) && this->Check_ElecECv(ecv) && this->Check_ElecECw(ecw)) : true;
 }
 
 // check the cut on electron EC inner energy
@@ -176,7 +185,7 @@ bool ElectronID::Check_ElecECin(double ecin)
 // set the ECin cut
 void ElectronID::SetCut_ElecECin(double ecin)
 {
-    cuts_ElecID_ECin = this->Check_ElecECin(ecin);
+    cuts_ElecID_ECin = (this->Get_IsSim() == 0) ? this->Check_ElecECin(ecin) : true;
 }
 
 // check the cut on electron time difference between EC and SC
@@ -204,7 +213,7 @@ bool ElectronID::Check_ElecCCnphe(double nphe)
 // set the electron CC cut
 void ElectronID::SetCut_ElecCCnphe(double nphe)
 {
-    cuts_ElecID_CCnphe = this->Check_ElecCCnphe(nphe);
+    cuts_ElecID_CCnphe = (this->Get_IsSim() == 0) ? this->Check_ElecCCnphe(nphe) : true;
 }
 
 double ElectronID::Get_EC_SamplingFraction(int coeff, int sector, int targMass)
@@ -258,7 +267,7 @@ bool ElectronID::Check_ElecECoverP(double mom, double ectot, int sector, int tar
 // set the electron EC/P vs P cut
 void ElectronID::SetCut_ElecECoverP(double mom, double ectot, int sector, int targMass)
 {
-    cuts_ElecID_ECoverP = this->Check_ElecECoverP(mom,ectot,sector,targMass);
+    cuts_ElecID_ECoverP = (this->Get_IsSim() == 0) ? this->Check_ElecECoverP(mom,ectot,sector,targMass) : true;
 }
 
 double ElectronID::Get_ECinP_VS_ECoutP_Parameters(int coeff, int sector)

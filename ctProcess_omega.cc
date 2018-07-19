@@ -331,7 +331,7 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
         cuts_PipPim = Analyze_PipPim(pimReader, pipReader); // charged pion pair analysis
         
         cuts_Electron = false; // initialize the electron cut
-        cuts_Electron = Analyze_Electron(elecReader, Qsq, targMass); // electron analysis
+        cuts_Electron = Analyze_Electron(elecReader, Qsq, targMass, iSim); // electron analysis
 
         cuts_Photons = false; // initialize the photon pair cut
         cuts_Photons = Analyze_Photons(photon1Reader, photon2Reader,iSim); // photon pair analysis
@@ -1126,9 +1126,9 @@ bool Analyze_Photons(PartReader photon1Reader, PartReader photon2Reader, int iSi
     return myPhotID.GetCut_Photon_All();
 }
 
-bool Analyze_Electron(PartReader elecReader, double Qsq, double targMass)
+bool Analyze_Electron(PartReader elecReader, double Qsq, double targMass, int iSim)
 {
-    ElectronID myElecID;
+    ElectronID myElecID(iSim);
     EC_geometry myECgeom;
     
     bool cuts_ElecID;
@@ -1381,7 +1381,7 @@ int main (int argc, char **argv) {
         
     myCounter.Init(); // zero out the counters
     
-    myHistManager.BookHist(); // declare histograms
+    myHistManager.BookHist(iSim); // declare histograms
     
     for (i = optind; i < argc; ++i) {
         inFile = argv[i]; // process all arguments on command line.
@@ -1394,7 +1394,7 @@ int main (int argc, char **argv) {
         }
     }
     
-    myHistManager.WriteHist(outFile); // write histograms to a file
+    myHistManager.WriteHist(outFile,iSim); // write histograms to a file
     
     myCounter.Print(); // Print the counter statistics
     

@@ -16,7 +16,8 @@ class ElectronID
     vector<double> Range_dtECSC;
     vector<double> RangeCCnphe;
     
-
+    int isSim; // flag to indicate whether data or simulation
+    
     // parameters to calculate the EC sampling fraction of total energy vs P
     double EC_SamplingFrac_C[6][5];
     double EC_SamplingFrac_Fe[6][5];
@@ -35,7 +36,7 @@ class ElectronID
     bool cuts_ElecID_ECinP_ECoutP;
     
 public:
-    ElectronID();
+    ElectronID(int inputSim);
     int Get_nElecID() {return elecIDLabel.size();};
     string Get_elecIDLabel(int num) {return elecIDLabel[num];};
     double Get_ElecMom_lo() {return RangeElecMom[0];};
@@ -82,6 +83,9 @@ public:
     bool GetCut_ElecMom() {return cuts_ElecID_Mom;};
     void SetCut_Elec_All();
     bool GetCut_Elec_All() {return cuts_ElecID;};
+    
+    int Get_IsSim() {return isSim;};
+    void Set_IsSim(int inputSim);
     
     void Print_ElectronID();
 };

@@ -256,8 +256,8 @@ private:
     
 public:
     HistManager();
-    void BookHist();
-    void WriteHist(string RootFile);
+    void BookHist(int inputSim);
+    void WriteHist(string RootFile, int inputSim);
     
     int Get_nMassDiffLabel() { return MassDiffLabel.size(); };
     string Get_MassDiffLabel(int num) { return MassDiffLabel[num]; };
