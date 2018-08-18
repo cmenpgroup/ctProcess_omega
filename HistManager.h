@@ -35,6 +35,7 @@ private:
     double BEAM_ENERGY; // electron beam energy in GeV
 
     static const Int_t MAX_DETPART = 6; // should match with DetPartLabel in DetectedParticle.cc
+    static const Int_t MAX_PART = 8; // should match with DetPartLabel in ParticleList.cc
     static const Int_t MAX_MASSDIFF = 8; // mass difference combinations a la CERN
     
     vector<string> MassDiffLabel;
@@ -63,8 +64,16 @@ private:
     TH2D *scMassSquared_EC;
     TH2D *scMassSquared_PC;
     TH2D *scMassSquared_EPC;
-    TH2D *Theta_VS_Phi[7];
+    TH2D *Theta_VS_Phi[MAX_PART];
     TH2D *TotalMomentum;
+    TH2D *TotalMomentum_EPC;
+    TH2D *TotalMomentum_AllCuts;
+    TH2D *TotalMomentum_OmegaMass;
+    TH2D *TotalMomentum_ChPion;
+    TH2D *TotalEnergy;
+    TH2D *TotalEnergy_EPC;
+    TH2D *TotalEnergy_AllCuts;
+    TH2D *TotalEnergy_OmegaMass;
     TH2D *elecZVert_VS_Phi;
     TH2D *elecZVert_VS_Phi_Corr;
 
@@ -152,6 +161,13 @@ private:
     TH2D *Pt_VS_IMOmega[3];
     TH2D *Pl_VS_IMOmega[3];
     TH2D *OpAng_VS_IMOmega[3];
+    TH2D *MMsq_MissPi[3];
+    TH2D *Mom_VS_Theta_MissPim[3];
+    TH2D *Mom_VS_Theta_MissPip[3];
+    TH2D *Mom_VS_Theta_MissPi0[3];
+    TH2D *Mom_VS_Theta_Pim[3];
+    TH2D *Mom_VS_Theta_Pip[3];
+    TH2D *Mom_VS_Theta_Pi0[3];
     TH2D *IMOmega[3];
     TH2D *IMOmega_woCut[3];
     TH2D *IMOmega_antiCut[3];
@@ -288,6 +304,14 @@ public:
     TH2D* GetScMassSquared_EPC() { return scMassSquared_EPC; };
     TH2D* GetTheta_VS_Phi(int index) { return Theta_VS_Phi[index]; };
     TH2D* GetTotalMomentum() { return TotalMomentum; };
+    TH2D* GetTotalMomentum_EPC() { return TotalMomentum_EPC; };
+    TH2D* GetTotalMomentum_AllCuts() { return TotalMomentum_AllCuts; };
+    TH2D* GetTotalMomentum_OmegaMass() { return TotalMomentum_OmegaMass; };
+    TH2D* GetTotalMomentum_ChPion() { return TotalMomentum_ChPion; };
+    TH2D* GetTotalEnergy() { return TotalEnergy; };
+    TH2D* GetTotalEnergy_EPC() { return TotalEnergy_EPC; };
+    TH2D* GetTotalEnergy_AllCuts() { return TotalEnergy_AllCuts; };
+    TH2D* GetTotalEnergy_OmegaMass() { return TotalEnergy_OmegaMass; };
     TH2D* GetElecZVert_VS_Phi() { return elecZVert_VS_Phi; };
     TH2D* GetElecZVert_VS_Phi_Corr() { return elecZVert_VS_Phi_Corr; };
 
@@ -367,6 +391,13 @@ public:
     TH2D* GetOpAng_VS_IM2Photons(int index) { return OpAng_VS_IM2Photons[index]; };
     TH2D* GetOpAng_VS_E(int index) { return OpAng_VS_E[index]; };
     TH2D* GetOpAng_VS_E_MassPi0Cut(int index) { return OpAng_VS_E_MassPi0Cut[index]; };
+    TH2D* GetMMsq_MissPi(int index) { return MMsq_MissPi[index]; };
+    TH2D* GetMom_VS_Theta_MissPim(int index) { return Mom_VS_Theta_MissPim[index]; };
+    TH2D* GetMom_VS_Theta_MissPip(int index) { return Mom_VS_Theta_MissPip[index]; };
+    TH2D* GetMom_VS_Theta_MissPi0(int index) { return Mom_VS_Theta_MissPi0[index]; };
+    TH2D* GetMom_VS_Theta_Pim(int index) { return Mom_VS_Theta_Pim[index]; };
+    TH2D* GetMom_VS_Theta_Pip(int index) { return Mom_VS_Theta_Pip[index]; };
+    TH2D* GetMom_VS_Theta_Pi0(int index) { return Mom_VS_Theta_Pi0[index]; };
     TH2D* GetIM2Pions_VS_IMOmega(int index) { return IM2Pions_VS_IMOmega[index]; };
     TH2D* GetIM2Pions_VS_IMOmega_AllCuts(int index) { return IM2Pions_VS_IMOmega_AllCuts[index]; };
     TH2D* GetIM2Photons_VS_IMOmega(int index) { return IM2Photons_VS_IMOmega[index]; };

@@ -43,3 +43,18 @@ string ParticleList::Get_PartLabel(int num)
 {
     return PartLabel[num];
 }
+
+int ParticleList::Get_PartIndex(string label)
+{
+    int ret = -1;
+    bool ifound = false;
+    
+    for(int ii=0; ii<this->Get_nPartLabel(); ii++){
+        if (this->Get_PartLabel(ii).compare(label)==0) {
+            ret = ii;
+            ifound = true;
+        }
+    }
+    if(!ifound) cout<<"ParticleList::Get_PartIndex(), Unknown label "<<label<<endl;
+    return ret;
+}

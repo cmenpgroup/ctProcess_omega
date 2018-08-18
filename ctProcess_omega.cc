@@ -27,9 +27,11 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
     
     PhotonID tempPhotID(iSim);
     DetectedParticles myDetPart;
+    ParticleList myPartList;
     EG2Target myTgt;
     EG2Cuts myCuts;
     OmegaMixedEvent myMixEvt;
+    ChargedPionID procChPionID; // create the charged pion pair object, which will initialize the cuts to false
     
     if(printCuts){ // print out the cut parameters
         myCuts.Print_Cuts();
@@ -54,10 +56,12 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
     TLorentzVector TwoPion;
     TLorentzVector TwoPhoton;
 	TLorentzVector Omega;
+    TLorentzVector Omega_temp;
     TLorentzVector Omega_RF;
     TLorentzVector nPion_RF;
     TLorentzVector pPion_RF;
     TLorentzVector TwoPhoton_RF;
+    TLorentzVector MissX;
     
     TLorentzVector photon1_MixedEvt;
     TLorentzVector photon2_MixedEvt;
@@ -297,23 +301,32 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
 		myHistManager.GetXvert_VS_Yvert(myDetPart.Get_PartIndex("Photon2"))->Fill(photon2_vert.X(), photon2_vert.Y());
         
         // plots of angles theta vs phi
-		myHistManager.GetTheta_VS_Phi(0)->Fill(elec.Theta() * TMath::RadToDeg(), elec.Phi() * TMath::RadToDeg());
-		myHistManager.GetTheta_VS_Phi(1)->Fill(nPion.Theta() * TMath::RadToDeg(), nPion.Phi() * TMath::RadToDeg());
-		myHistManager.GetTheta_VS_Phi(2)->Fill(pPion.Theta() * TMath::RadToDeg(), pPion.Phi() * TMath::RadToDeg());
-		myHistManager.GetTheta_VS_Phi(3)->Fill(photon1.Theta() * TMath::RadToDeg(), photon1.Phi() * TMath::RadToDeg());
-		myHistManager.GetTheta_VS_Phi(4)->Fill(photon2.Theta() * TMath::RadToDeg(), photon2.Phi() * TMath::RadToDeg());
-		myHistManager.GetTheta_VS_Phi(5)->Fill(TwoPhoton.Theta() * TMath::RadToDeg(), TwoPhoton.Phi() * TMath::RadToDeg());
-		myHistManager.GetTheta_VS_Phi(6)->Fill(Omega.Theta() * TMath::RadToDeg(), Omega.Phi() * TMath::RadToDeg());
+		myHistManager.GetTheta_VS_Phi(myPartList.Get_PartIndex("Electron"))->Fill(elec.Theta() * TMath::RadToDeg(), elec.Phi() * TMath::RadToDeg());
+		myHistManager.GetTheta_VS_Phi(myPartList.Get_PartIndex("Pi-"))->Fill(nPion.Theta() * TMath::RadToDeg(), nPion.Phi() * TMath::RadToDeg());
+		myHistManager.GetTheta_VS_Phi(myPartList.Get_PartIndex("Pi+"))->Fill(pPion.Theta() * TMath::RadToDeg(), pPion.Phi() * TMath::RadToDeg());
+		myHistManager.GetTheta_VS_Phi(myPartList.Get_PartIndex("Photon1"))->Fill(photon1.Theta() * TMath::RadToDeg(), photon1.Phi() * TMath::RadToDeg());
+		myHistManager.GetTheta_VS_Phi(myPartList.Get_PartIndex("Photon2"))->Fill(photon2.Theta() * TMath::RadToDeg(), photon2.Phi() * TMath::RadToDeg());
+		myHistManager.GetTheta_VS_Phi(myPartList.Get_PartIndex("Pi0"))->Fill(TwoPhoton.Theta() * TMath::RadToDeg(), TwoPhoton.Phi() * TMath::RadToDeg());
+		myHistManager.GetTheta_VS_Phi(myPartList.Get_PartIndex("Omega"))->Fill(Omega.Theta() * TMath::RadToDeg(), Omega.Phi() * TMath::RadToDeg());
 
-        // plots of total momentum
-		myHistManager.GetTotalMomentum()->Fill(elec.P(),0);
-		myHistManager.GetTotalMomentum()->Fill(nPion.P(),1);
-		myHistManager.GetTotalMomentum()->Fill(pPion.P(),2);
-		myHistManager.GetTotalMomentum()->Fill(photon1.P(),3);
-		myHistManager.GetTotalMomentum()->Fill(photon2.P(),4);
-		myHistManager.GetTotalMomentum()->Fill(TwoPhoton.P(),5);
-		myHistManager.GetTotalMomentum()->Fill(Omega.P(),6);
+        // plots of total momentum before cuts
+		myHistManager.GetTotalMomentum()->Fill(elec.P(),myPartList.Get_PartIndex("Electron"));
+		myHistManager.GetTotalMomentum()->Fill(nPion.P(),myPartList.Get_PartIndex("Pi-"));
+		myHistManager.GetTotalMomentum()->Fill(pPion.P(),myPartList.Get_PartIndex("Pi+"));
+		myHistManager.GetTotalMomentum()->Fill(photon1.P(),myPartList.Get_PartIndex("Photon1"));
+		myHistManager.GetTotalMomentum()->Fill(photon2.P(),myPartList.Get_PartIndex("Photon2"));
+		myHistManager.GetTotalMomentum()->Fill(TwoPhoton.P(),myPartList.Get_PartIndex("Pi0"));
+		myHistManager.GetTotalMomentum()->Fill(Omega.P(),myPartList.Get_PartIndex("Omega"));
 
+        // plots of total energy before cuts
+        myHistManager.GetTotalEnergy()->Fill(elec.E(),myPartList.Get_PartIndex("Electron"));
+        myHistManager.GetTotalEnergy()->Fill(nPion.E(),myPartList.Get_PartIndex("Pi-"));
+        myHistManager.GetTotalEnergy()->Fill(pPion.E(),myPartList.Get_PartIndex("Pi+"));
+        myHistManager.GetTotalEnergy()->Fill(photon1.E(),myPartList.Get_PartIndex("Photon1"));
+        myHistManager.GetTotalEnergy()->Fill(photon2.E(),myPartList.Get_PartIndex("Photon2"));
+        myHistManager.GetTotalEnergy()->Fill(TwoPhoton.E(),myPartList.Get_PartIndex("Pi0"));
+        myHistManager.GetTotalEnergy()->Fill(Omega.E(),myPartList.Get_PartIndex("Omega"));
+        
 		// plots of beta vs momentum
 		myHistManager.GetBeta_VS_Momentum()->Fill(elec.P(), elec.Beta());
 		myHistManager.GetBeta_VS_Momentum()->Fill(nPion.P(), nPion.Beta());
@@ -401,12 +414,30 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
         //
         if(cuts_Electron && cuts_Photons && cuts_PipPim){
             // EPC - electron, photon, pion cuts
-            myHistManager.GetDBeta_VS_Momentum_EPC(0)->Fill(elec.P(), elecReader.Get_BetaDifference(MASS_ELECTRON));
-            myHistManager.GetDBeta_VS_Momentum_EPC(1)->Fill(nPion.P(), pimReader.Get_BetaDifference(MASS_PION_CHARGED));
-            myHistManager.GetDBeta_VS_Momentum_EPC(2)->Fill(pPion.P(), pipReader.Get_BetaDifference(MASS_PION_CHARGED));
-            myHistManager.GetDBeta_VS_Momentum_EPC(3)->Fill(photon1.P(), photon1Reader.Get_BetaDifference(MASS_PHOTON));
-            myHistManager.GetDBeta_VS_Momentum_EPC(4)->Fill(photon2.P(), photon2Reader.Get_BetaDifference(MASS_PHOTON));
-
+            myHistManager.GetDBeta_VS_Momentum_EPC(myDetPart.Get_PartIndex("Electron"))->Fill(elec.P(), elecReader.Get_BetaDifference(MASS_ELECTRON));
+            myHistManager.GetDBeta_VS_Momentum_EPC(myDetPart.Get_PartIndex("Pi-"))->Fill(nPion.P(), pimReader.Get_BetaDifference(MASS_PION_CHARGED));
+            myHistManager.GetDBeta_VS_Momentum_EPC(myDetPart.Get_PartIndex("Pi+"))->Fill(pPion.P(), pipReader.Get_BetaDifference(MASS_PION_CHARGED));
+            myHistManager.GetDBeta_VS_Momentum_EPC(myDetPart.Get_PartIndex("Photon1"))->Fill(photon1.P(), photon1Reader.Get_BetaDifference(MASS_PHOTON));
+            myHistManager.GetDBeta_VS_Momentum_EPC(myDetPart.Get_PartIndex("Photon2"))->Fill(photon2.P(), photon2Reader.Get_BetaDifference(MASS_PHOTON));
+            
+            // plots of total momentum after PID cuts
+            myHistManager.GetTotalMomentum_EPC()->Fill(elec.P(),myPartList.Get_PartIndex("Electron"));
+            myHistManager.GetTotalMomentum_EPC()->Fill(nPion.P(),myPartList.Get_PartIndex("Pi-"));
+            myHistManager.GetTotalMomentum_EPC()->Fill(pPion.P(),myPartList.Get_PartIndex("Pi+"));
+            myHistManager.GetTotalMomentum_EPC()->Fill(photon1.P(),myPartList.Get_PartIndex("Photon1"));
+            myHistManager.GetTotalMomentum_EPC()->Fill(photon2.P(),myPartList.Get_PartIndex("Photon2"));
+            myHistManager.GetTotalMomentum_EPC()->Fill(TwoPhoton.P(),myPartList.Get_PartIndex("Pi0"));
+            myHistManager.GetTotalMomentum_EPC()->Fill(Omega.P(),myPartList.Get_PartIndex("Omega"));
+            
+            // plots of total energy after PID cuts
+            myHistManager.GetTotalEnergy_EPC()->Fill(elec.E(),myPartList.Get_PartIndex("Electron"));
+            myHistManager.GetTotalEnergy_EPC()->Fill(nPion.E(),myPartList.Get_PartIndex("Pi-"));
+            myHistManager.GetTotalEnergy_EPC()->Fill(pPion.E(),myPartList.Get_PartIndex("Pi+"));
+            myHistManager.GetTotalEnergy_EPC()->Fill(photon1.E(),myPartList.Get_PartIndex("Photon1"));
+            myHistManager.GetTotalEnergy_EPC()->Fill(photon2.E(),myPartList.Get_PartIndex("Photon2"));
+            myHistManager.GetTotalEnergy_EPC()->Fill(TwoPhoton.E(),myPartList.Get_PartIndex("Pi0"));
+            myHistManager.GetTotalEnergy_EPC()->Fill(Omega.E(),myPartList.Get_PartIndex("Omega"));
+            
             // electron, photon, pion cuts, TOF mass
             myHistManager.GetScMassSquared_EPC()->Fill(emSCMassSq,myDetPart.Get_PartIndex("Electron"));
             myHistManager.GetScMassSquared_EPC()->Fill(pimSCMassSq,myDetPart.Get_PartIndex("Pi-"));
@@ -647,6 +678,25 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
             myCuts.SetCut_OmegaID();
             if(myCuts.GetCut_OmegaID()){
                 myCounter.Increment("Omega ID (All)");
+                
+                // plots of total momentum after PID and omega cuts
+                myHistManager.GetTotalMomentum_AllCuts()->Fill(elec.P(),myPartList.Get_PartIndex("Electron"));
+                myHistManager.GetTotalMomentum_AllCuts()->Fill(nPion.P(),myPartList.Get_PartIndex("Pi-"));
+                myHistManager.GetTotalMomentum_AllCuts()->Fill(pPion.P(),myPartList.Get_PartIndex("Pi+"));
+                myHistManager.GetTotalMomentum_AllCuts()->Fill(photon1.P(),myPartList.Get_PartIndex("Photon1"));
+                myHistManager.GetTotalMomentum_AllCuts()->Fill(photon2.P(),myPartList.Get_PartIndex("Photon2"));
+                myHistManager.GetTotalMomentum_AllCuts()->Fill(TwoPhoton.P(),myPartList.Get_PartIndex("Pi0"));
+                myHistManager.GetTotalMomentum_AllCuts()->Fill(Omega.P(),myPartList.Get_PartIndex("Omega"));
+
+                // plots of total energy after PID and omega cuts
+                myHistManager.GetTotalEnergy_AllCuts()->Fill(elec.E(),myPartList.Get_PartIndex("Electron"));
+                myHistManager.GetTotalEnergy_AllCuts()->Fill(nPion.E(),myPartList.Get_PartIndex("Pi-"));
+                myHistManager.GetTotalEnergy_AllCuts()->Fill(pPion.E(),myPartList.Get_PartIndex("Pi+"));
+                myHistManager.GetTotalEnergy_AllCuts()->Fill(photon1.E(),myPartList.Get_PartIndex("Photon1"));
+                myHistManager.GetTotalEnergy_AllCuts()->Fill(photon2.E(),myPartList.Get_PartIndex("Photon2"));
+                myHistManager.GetTotalEnergy_AllCuts()->Fill(TwoPhoton.E(),myPartList.Get_PartIndex("Pi0"));
+                myHistManager.GetTotalEnergy_AllCuts()->Fill(Omega.E(),myPartList.Get_PartIndex("Omega"));
+                
                 myHistManager.GetIM2Photons(Vz_index)->Fill(TwoPhoton.M(),1);
                 myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),1);
                 myHistManager.GetW_VS_IMOmega_AllCuts(Vz_index)->Fill(W, Omega.M()); // variable = W
@@ -718,9 +768,67 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
                 if(myCuts.GetCut_MassOmega()){
                     myHistManager.GetXvert_VS_Yvert_Omega(Vz_index)->Fill(elec_vert.X(), elec_vert.Y());
                     myHistManager.GetPtSq_Omega_AllCuts_IMOmegaCut(Vz_index)->Fill(Omega.Perp2());
+                    
+                    // plots of total momentum after PID and omega cuts
+                    myHistManager.GetTotalMomentum_OmegaMass()->Fill(elec.P(),myPartList.Get_PartIndex("Electron"));
+                    myHistManager.GetTotalMomentum_OmegaMass()->Fill(nPion.P(),myPartList.Get_PartIndex("Pi-"));
+                    myHistManager.GetTotalMomentum_OmegaMass()->Fill(pPion.P(),myPartList.Get_PartIndex("Pi+"));
+                    myHistManager.GetTotalMomentum_OmegaMass()->Fill(photon1.P(),myPartList.Get_PartIndex("Photon1"));
+                    myHistManager.GetTotalMomentum_OmegaMass()->Fill(photon2.P(),myPartList.Get_PartIndex("Photon2"));
+                    myHistManager.GetTotalMomentum_OmegaMass()->Fill(TwoPhoton.P(),myPartList.Get_PartIndex("Pi0"));
+                    myHistManager.GetTotalMomentum_OmegaMass()->Fill(Omega.P(),myPartList.Get_PartIndex("Omega"));
+                    
+                    // plots of total energy after PID and omega cuts
+                    myHistManager.GetTotalEnergy_OmegaMass()->Fill(elec.E(),myPartList.Get_PartIndex("Electron"));
+                    myHistManager.GetTotalEnergy_OmegaMass()->Fill(nPion.E(),myPartList.Get_PartIndex("Pi-"));
+                    myHistManager.GetTotalEnergy_OmegaMass()->Fill(pPion.E(),myPartList.Get_PartIndex("Pi+"));
+                    myHistManager.GetTotalEnergy_OmegaMass()->Fill(photon1.E(),myPartList.Get_PartIndex("Photon1"));
+                    myHistManager.GetTotalEnergy_OmegaMass()->Fill(photon2.E(),myPartList.Get_PartIndex("Photon2"));
+                    myHistManager.GetTotalEnergy_OmegaMass()->Fill(TwoPhoton.E(),myPartList.Get_PartIndex("Pi0"));
+                    myHistManager.GetTotalEnergy_OmegaMass()->Fill(Omega.E(),myPartList.Get_PartIndex("Omega"));
+                    
+                    Omega_temp.SetXYZM(Omega.X(),Omega.Y(), Omega.Z(),MASS_OMEGA);
+                    MissX = Omega_temp - pPion - TwoPhoton;
+                    myHistManager.GetMMsq_MissPi(Vz_index)->Fill(MissX.M2(),0);
+                    myHistManager.GetMom_VS_Theta_MissPim(Vz_index)->Fill(MissX.P(),MissX.Theta()*TMath::RadToDeg());
+                    myHistManager.GetMom_VS_Theta_Pim(Vz_index)->Fill(nPion.P(),nPion.Theta()*TMath::RadToDeg());
+                    
+                    MissX = Omega_temp - nPion - TwoPhoton;
+                    myHistManager.GetMMsq_MissPi(Vz_index)->Fill(MissX.M2(),1);
+                    myHistManager.GetMom_VS_Theta_MissPip(Vz_index)->Fill(MissX.P(),MissX.Theta()*TMath::RadToDeg());
+                    myHistManager.GetMom_VS_Theta_Pip(Vz_index)->Fill(pPion.P(),pPion.Theta()*TMath::RadToDeg());
+                    
+                    MissX = Omega_temp - nPion - pPion;
+                    myHistManager.GetMMsq_MissPi(Vz_index)->Fill(MissX.M2(),2);
+                    myHistManager.GetMom_VS_Theta_MissPi0(Vz_index)->Fill(MissX.P(),MissX.Theta()*TMath::RadToDeg());
+                    myHistManager.GetMom_VS_Theta_Pi0(Vz_index)->Fill(TwoPhoton.P(),TwoPhoton.Theta()*TMath::RadToDeg());
+                    
+                    myHistManager.GetMMsq_MissPi(Vz_index)->Fill(nPion.M2(),3);
+                    myHistManager.GetMMsq_MissPi(Vz_index)->Fill(pPion.M2(),4);
+                    myHistManager.GetMMsq_MissPi(Vz_index)->Fill(TwoPhoton.M2(),5);
                 }
                 if(myCuts.GetCut_MassOmega_sb()){
                     myHistManager.GetPtSq_Omega_AllCuts_IMOmegaSBCut(Vz_index)->Fill(Omega.Perp2());
+                }
+                
+                // applying the cut on the minimium charged pion momentum
+                procChPionID.SetCut_PosPionMomentum(pPion.P());
+                procChPionID.SetCut_NegPionMomentum(nPion.P());
+                if(procChPionID.GetCut_PosPionMomentum() && procChPionID.GetCut_NegPionMomentum()){
+                    myHistManager.GetIM2Photons(Vz_index)->Fill(TwoPhoton.M(),21);
+                    myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),21);
+                    
+                    // plots of total momentum after PID and omega cuts
+                    myHistManager.GetTotalMomentum_ChPion()->Fill(elec.P(),myPartList.Get_PartIndex("Electron"));
+                    myHistManager.GetTotalMomentum_ChPion()->Fill(nPion.P(),myPartList.Get_PartIndex("Pi-"));
+                    myHistManager.GetTotalMomentum_ChPion()->Fill(pPion.P(),myPartList.Get_PartIndex("Pi+"));
+                    myHistManager.GetTotalMomentum_ChPion()->Fill(photon1.P(),myPartList.Get_PartIndex("Photon1"));
+                    myHistManager.GetTotalMomentum_ChPion()->Fill(photon2.P(),myPartList.Get_PartIndex("Photon2"));
+                    myHistManager.GetTotalMomentum_ChPion()->Fill(TwoPhoton.P(),myPartList.Get_PartIndex("Pi0"));
+                    myHistManager.GetTotalMomentum_ChPion()->Fill(Omega.P(),myPartList.Get_PartIndex("Omega"));
+                }else{
+                    myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),21);
+                    myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),21);
                 }
                 
                 // Invariant mass diferences

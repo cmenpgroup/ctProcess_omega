@@ -58,7 +58,7 @@ void HistManager::BookHist(int inputSim)
     double PtSq_omegaLo = 0.0;
     double PtSq_omegaHi = 2.0;
     
-    int nCuts = 21;
+    int nCuts = 22;
     double CutsLo = -0.5;
     double CutsHi = nCuts + CutsLo;
     
@@ -83,6 +83,10 @@ void HistManager::BookHist(int inputSim)
     int nDetPart = myDetPart.Get_nDetPartLabel();
     double DetPartLo = -0.5;
     double DetPartHi = myDetPart.Get_nDetPartLabel() + DetPartLo;
+
+    int nPartList = myPartList.Get_nPartLabel();
+    double PartLo = -0.5;
+    double PartHi = myPartList.Get_nPartLabel() + PartLo;
     
     int nME_Methods = myMixEvt.Get_nLabel();
     int nElecID = myElecID.Get_nElecID();
@@ -177,7 +181,39 @@ void HistManager::BookHist(int inputSim)
     
     sprintf(hname,"TotalMomentum");
     sprintf(htitle,"Total Momentum");
-	TotalMomentum = new TH2D(hname,htitle, 600, 0, 6, 7, -0.5, 6.5);
+	TotalMomentum = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
+
+    sprintf(hname,"TotalMomentum_EPC");
+    sprintf(htitle,"Total Momentum (PID Cuts)");
+    TotalMomentum_EPC = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
+    
+    sprintf(hname,"TotalMomentum_AllCuts");
+    sprintf(htitle,"Total Momentum (All Cuts)");
+    TotalMomentum_AllCuts = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
+
+    sprintf(hname,"TotalMomentum_OmegaMass");
+    sprintf(htitle,"Total Momentum (#omega mass)");
+    TotalMomentum_OmegaMass = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
+
+    sprintf(hname,"TotalMomentum_ChPion");
+    sprintf(htitle,"Total Momentum (charged pion)");
+    TotalMomentum_ChPion = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
+    
+    sprintf(hname,"TotalEnergy");
+    sprintf(htitle,"Total Energy");
+    TotalEnergy = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
+    
+    sprintf(hname,"TotalEnergy_EPC");
+    sprintf(htitle,"Total Energy (PID Cuts)");
+    TotalEnergy_EPC = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
+    
+    sprintf(hname,"TotalEnergy_AllCuts");
+    sprintf(htitle,"Total Energy (All Cuts)");
+    TotalEnergy_AllCuts = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
+
+    sprintf(hname,"TotalEnergy_OmegaMass");
+    sprintf(htitle,"Total Energy (#omega mass)");
+    TotalEnergy_OmegaMass = new TH2D(hname,htitle, 600, 0, 6, nPartList, PartLo, PartHi);
     
     sprintf(hname,"OpAng_2Photons");
     sprintf(htitle,"Opening Angle Between Photons");
@@ -488,6 +524,34 @@ void HistManager::BookHist(int inputSim)
 		sprintf(htitle,"Missing Mass Squared, %s",myTgt.Get_Label(i).c_str());
 		MMsq[i] = new TH1D(hname, htitle, 700, 0, 7);
 
+        sprintf(hname,"MMsq_MissPi_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Missing Mass Squared (#omega - 2#pi), %s",myTgt.Get_Label(i).c_str());
+        MMsq_MissPi[i] = new TH2D(hname, htitle, 100, -0.1, 0.1,6,-0.5,5.5);
+
+        sprintf(hname,"Mom_VS_Theta_MissPim_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Momentum vs. #theta (missing #pi^{-}), %s",myTgt.Get_Label(i).c_str());
+        Mom_VS_Theta_MissPim[i] = new TH2D(hname, htitle, 300, 0.0, 3.0,120, 0.0, 120.0);
+
+        sprintf(hname,"Mom_VS_Theta_MissPip_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Momentum vs. #theta (missing #pi^{+}), %s",myTgt.Get_Label(i).c_str());
+        Mom_VS_Theta_MissPip[i] = new TH2D(hname, htitle, 300, 0.0, 3.0,120, 0.0, 120.0);
+        
+        sprintf(hname,"Mom_VS_Theta_MissPi0_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Momentum vs. #theta (missing #pi^{0}), %s",myTgt.Get_Label(i).c_str());
+        Mom_VS_Theta_MissPi0[i] = new TH2D(hname, htitle, 300, 0.0, 3.0,120, 0.0, 120.0);
+
+        sprintf(hname,"Mom_VS_Theta_Pim_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Momentum vs. #theta (#pi^{-}), %s",myTgt.Get_Label(i).c_str());
+        Mom_VS_Theta_Pim[i] = new TH2D(hname, htitle, 300, 0.0, 3.0,120, 0.0, 120.0);
+        
+        sprintf(hname,"Mom_VS_Theta_Pip_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Momentum vs. #theta (#pi^{+}), %s",myTgt.Get_Label(i).c_str());
+        Mom_VS_Theta_Pip[i] = new TH2D(hname, htitle, 300, 0.0, 3.0,120, 0.0, 120.0);
+        
+        sprintf(hname,"Mom_VS_Theta_Pi0_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Momentum vs. #theta (#pi^{0}), %s",myTgt.Get_Label(i).c_str());
+        Mom_VS_Theta_Pi0[i] = new TH2D(hname, htitle, 300, 0.0, 3.0,120, 0.0, 120.0);
+        
         sprintf(hname,"IMOmega_%s",myTgt.Get_Label(i).c_str());
 		sprintf(htitle,"Reconstructed Mass of #omega - Single Cut, %s",myTgt.Get_Label(i).c_str());
 		IMOmega[i] = new TH2D(hname, htitle, nIMomega, IMomegaLo, IMomegaHi, nCuts, CutsLo, CutsHi);
@@ -1040,6 +1104,38 @@ void HistManager::WriteHist(string RootFile, int inputSim){
     TotalMomentum->GetXaxis()->SetTitle("Momentum (GeV/c)");
     TotalMomentum->GetYaxis()->SetTitle("Particle");
 	TotalMomentum->Write();
+
+    TotalMomentum_EPC->GetXaxis()->SetTitle("Momentum (GeV/c)");
+    TotalMomentum_EPC->GetYaxis()->SetTitle("Particle");
+    TotalMomentum_EPC->Write();
+    
+    TotalMomentum_AllCuts->GetXaxis()->SetTitle("Momentum (GeV/c)");
+    TotalMomentum_AllCuts->GetYaxis()->SetTitle("Particle");
+    TotalMomentum_AllCuts->Write();
+
+    TotalMomentum_OmegaMass->GetXaxis()->SetTitle("Momentum (GeV/c)");
+    TotalMomentum_OmegaMass->GetYaxis()->SetTitle("Particle");
+    TotalMomentum_OmegaMass->Write();
+
+    TotalMomentum_ChPion->GetXaxis()->SetTitle("Momentum (GeV/c)");
+    TotalMomentum_ChPion->GetYaxis()->SetTitle("Particle");
+    TotalMomentum_ChPion->Write();
+    
+    TotalEnergy->GetXaxis()->SetTitle("Energy (GeV)");
+    TotalEnergy->GetYaxis()->SetTitle("Particle");
+    TotalEnergy->Write();
+    
+    TotalEnergy_EPC->GetXaxis()->SetTitle("Energy (GeV)");
+    TotalEnergy_EPC->GetYaxis()->SetTitle("Particle");
+    TotalEnergy_EPC->Write();
+    
+    TotalEnergy_AllCuts->GetXaxis()->SetTitle("Energy (GeV)");
+    TotalEnergy_AllCuts->GetYaxis()->SetTitle("Particle");
+    TotalEnergy_AllCuts->Write();
+
+    TotalEnergy_OmegaMass->GetXaxis()->SetTitle("Energy (GeV)");
+    TotalEnergy_OmegaMass->GetYaxis()->SetTitle("Particle");
+    TotalEnergy_OmegaMass->Write();
     
     OpAng_2Photons->GetXaxis()->SetTitle("Opening Angle between #gamma_{1} and #gamma_{2} (deg.)");
     OpAng_2Photons->GetYaxis()->SetTitle("Counts");
@@ -1248,10 +1344,38 @@ void HistManager::WriteHist(string RootFile, int inputSim){
         MissMom[i]->GetYaxis()->SetTitle("Counts");
 		MissMom[i]->Write();
         
-        MMsq[i]->GetXaxis()->SetTitle("Missing Mass Squared (GeV/c)^{2}");
+        MMsq[i]->GetXaxis()->SetTitle("Missing Mass Squared (GeV/c^{2})^{2}");
         MMsq[i]->GetYaxis()->SetTitle("Counts");
 		MMsq[i]->Write();
 
+        MMsq_MissPi[i]->GetXaxis()->SetTitle("Missing Mass Squared (GeV/c^{2})^{2}");
+        MMsq_MissPi[i]->GetYaxis()->SetTitle("Missing Pion");
+        MMsq_MissPi[i]->Write();
+
+        Mom_VS_Theta_MissPim[i]->GetXaxis()->SetTitle("Momentum (GeV/c)");
+        Mom_VS_Theta_MissPim[i]->GetYaxis()->SetTitle("#theta (deg.)");
+        Mom_VS_Theta_MissPim[i]->Write();
+
+        Mom_VS_Theta_MissPip[i]->GetXaxis()->SetTitle("Momentum (GeV/c)");
+        Mom_VS_Theta_MissPip[i]->GetYaxis()->SetTitle("#theta (deg.)");
+        Mom_VS_Theta_MissPip[i]->Write();
+
+        Mom_VS_Theta_MissPi0[i]->GetXaxis()->SetTitle("Momentum (GeV/c)");
+        Mom_VS_Theta_MissPi0[i]->GetYaxis()->SetTitle("#theta (deg.)");
+        Mom_VS_Theta_MissPi0[i]->Write();
+
+        Mom_VS_Theta_Pim[i]->GetXaxis()->SetTitle("Momentum (GeV/c)");
+        Mom_VS_Theta_Pim[i]->GetYaxis()->SetTitle("#theta (deg.)");
+        Mom_VS_Theta_Pim[i]->Write();
+        
+        Mom_VS_Theta_Pip[i]->GetXaxis()->SetTitle("Momentum (GeV/c)");
+        Mom_VS_Theta_Pip[i]->GetYaxis()->SetTitle("#theta (deg.)");
+        Mom_VS_Theta_Pip[i]->Write();
+        
+        Mom_VS_Theta_Pi0[i]->GetXaxis()->SetTitle("Momentum (GeV/c)");
+        Mom_VS_Theta_Pi0[i]->GetYaxis()->SetTitle("#theta (deg.)");
+        Mom_VS_Theta_Pi0[i]->Write();
+        
         IMOmega[i]->GetXaxis()->SetTitle("#pi^{+} #pi^{-} #gamma #gamma Inv. Mass (GeV/c^{2})");
         IMOmega[i]->GetYaxis()->SetTitle("Cut index");
 		IMOmega[i]->Write();
