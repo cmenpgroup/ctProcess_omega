@@ -24,8 +24,9 @@ PhotonID::PhotonID(int inputSim)
     RangePhotonMom.push_back(1000.0); // Upper limit on photon momentum (in GeV)
 
     RangePhotonBeta.push_back(0.95); // Lower limit on photon beta
-    RangePhotonBeta.push_back(1.95); // Upper limit on photon beta
-
+    RangePhotonBeta.push_back(1.05); // Upper limit on photon beta
+//    RangePhotonBeta.push_back(1.95); // Upper limit on photon beta
+    
     RangeSCMsq1.push_back(-0.041537); // Lower limit on photon 1 TOF M^2
     RangeSCMsq1.push_back(0.031435); // Upper limit on photon 1 TOF M^2
 
