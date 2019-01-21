@@ -52,6 +52,7 @@ class PartReader
     TLeaf *l_phipq;
     TLeaf *l_timecorr4;
 public:
+    PartReader();
     PartReader(TTree *tree, string branchName);
     void ReadEntry(int num);
     int Get_Sector() {return l_sector->GetValue();};

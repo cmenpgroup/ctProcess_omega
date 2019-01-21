@@ -37,9 +37,9 @@ private:
     static const Int_t MAX_DETPART = 6; // should match with DetPartLabel in DetectedParticle.cc
     static const Int_t MAX_PART = 8; // should match with DetPartLabel in ParticleList.cc
     static const Int_t MAX_MASSDIFF = 8; // mass difference combinations a la CERN
-    
+
     vector<string> MassDiffLabel;
-    
+
     TH1D *q2;
     TH1D *partcomb;
     TH1D *partcomb_omega;
@@ -94,7 +94,7 @@ private:
     TH2D *EChit_M2_VS_scMsq[MAX_DETPART];
     TH2D *EChit_M3_VS_scMsq[MAX_DETPART];
     TH2D *EChit_M4_VS_scMsq[MAX_DETPART];
-    
+
     TH2D *Mom_elecID;
     TH2D *CCnphe_elecID;
     TH2D *ECu_elecID;
@@ -176,15 +176,6 @@ private:
     TH2D *Xvert_VS_Yvert_AllCuts[3];
     TH2D *Xvert_VS_Yvert_Omega[3];
 
-    TH2D *IM2Photons_ME[3];
-    TH2D *IM2Photons_OpAng_ElecPhoton_Cut_ME[3];
-    TH2D *IMOmega_ME[3];
-    TH2D *IMOmega_OpAng_ElecPhoton_Cut_ME[3];
-    TH2D *IMOmega_MassPi0Cut_ME[3];
-    TH2D *IMOmega_ZVertCut_ME[3];
-    TH2D *IMOmega_QsqCut_ME[3];
-    TH2D *IMOmega_AllCuts_ME[3];
-    
     TH2D *VirtualPhotonAngle_VS_IMOmega_AllCuts[3];
     TH2D *OpAngVPomega_VS_IMOmega_AllCuts[3];
     TH2D *Pt_VS_IMOmega_AllCuts[3];
@@ -202,7 +193,7 @@ private:
     TH2D *Dalitz_pi0_AllCuts[3];
     TH2D *RFmom_VS_IMOmega_AllCuts[3];
     TH2D *RFinplane_VS_IMOmega_AllCuts[3];
-    
+
     TH2D *RelativityOpAngPhotonsA;
     TH2D *RelativityOpAngPhotonsB;
     TH1D *GammaPi0;
@@ -260,24 +251,26 @@ private:
     TH2D *mass2Pions_VS_massOmega_NC[3];
     TH2D *mass2Pions_VS_massOmega_EPC[3];
     TH2D *mass2Pions_VS_massOmega_EPOC[3];
-    
+
     // mass differences
     TH2D *MassDiff[3];
     TH2D *MsqDiff[3];
     TH2D *MassDiff_VS_IMOmega[3][MAX_MASSDIFF];
-    
+    TH1D *MassDiff_Rotated[3];
+    TH2D *MassDiff_VS_IMOmega_Rotated[3];
+
     // omega inv. mass vs z_h
-    TH2D *Zh_VS_IMOmega[3];
+    TH2D *IMOmega_VS_Zh[3];
     TH2D *MassDiff_VS_Zh[3][MAX_MASSDIFF];
-    
+
 public:
     HistManager();
     void BookHist(int inputSim);
     void WriteHist(string RootFile, int inputSim);
-    
+
     int Get_nMassDiffLabel() { return MassDiffLabel.size(); };
     string Get_MassDiffLabel(int num) { return MassDiffLabel[num]; };
-    
+
     TH1D* GetQ2() { return q2; };
     TH1D* GetPartComb() { return partcomb; };
     TH1D* GetPartComb_omega() { return partcomb_omega; };
@@ -332,7 +325,7 @@ public:
     TH2D* GetEChit_M2_VS_scMsq(int index) { return EChit_M2_VS_scMsq[index]; };
     TH2D* GetEChit_M3_VS_scMsq(int index) { return EChit_M3_VS_scMsq[index]; };
     TH2D* GetEChit_M4_VS_scMsq(int index) { return EChit_M4_VS_scMsq[index]; };
-    
+
     TH2D* GetMom_elecID() { return Mom_elecID; };
     TH2D* GetCCnphe_elecID() { return CCnphe_elecID; };
     TH2D* GetECu_elecID() { return ECu_elecID; };
@@ -414,15 +407,6 @@ public:
     TH2D* GetXvert_VS_Yvert_AllCuts(int index) { return Xvert_VS_Yvert_AllCuts[index]; };
     TH2D* GetXvert_VS_Yvert_Omega(int index) { return Xvert_VS_Yvert_Omega[index]; };
 
-    TH2D* GetIM2Photons_ME(int index) { return IM2Photons_ME[index]; };
-    TH2D* GetIM2Photons_OpAng_ElecPhoton_Cut_ME(int index) { return IM2Photons_OpAng_ElecPhoton_Cut_ME[index]; };
-    TH2D* GetIMOmega_ME(int index) { return IMOmega_ME[index]; };
-    TH2D* GetIMOmega_OpAng_ElecPhoton_Cut_ME(int index) { return IMOmega_OpAng_ElecPhoton_Cut_ME[index]; };
-    TH2D* GetIMOmega_MassPi0Cut_ME(int index) { return IMOmega_MassPi0Cut_ME[index]; };
-    TH2D* GetIMOmega_ZVertCut_ME(int index) { return IMOmega_ZVertCut_ME[index]; };
-    TH2D* GetIMOmega_QsqCut_ME(int index) { return IMOmega_QsqCut_ME[index]; };
-    TH2D* GetIMOmega_AllCuts_ME(int index) { return IMOmega_AllCuts_ME[index]; };
-
     TH2D* GetVirtualPhotonAngle_VS_IMOmega_AllCuts(int index) { return VirtualPhotonAngle_VS_IMOmega_AllCuts[index]; };
     TH2D* GetOpAngVPomega_VS_IMOmega_AllCuts(int index) { return OpAngVPomega_VS_IMOmega_AllCuts[index]; };
     TH2D* GetPt_VS_IMOmega_AllCuts(int index) { return Pt_VS_IMOmega_AllCuts[index]; };
@@ -440,7 +424,7 @@ public:
     TH2D* GetDalitz_pi0_AllCuts(int index) { return Dalitz_pi0_AllCuts[index]; };
     TH2D* GetRFmom_VS_IMOmega_AllCuts(int index) { return RFmom_VS_IMOmega_AllCuts[index]; };
     TH2D* GetRFinplane_VS_IMOmega_AllCuts(int index) { return RFinplane_VS_IMOmega_AllCuts[index]; };
-    
+
     TH2D* GetRelativityOpAngPhotonsA() { return RelativityOpAngPhotonsA; };
     TH2D* GetRelativityOpAngPhotonsB() { return RelativityOpAngPhotonsB; };
     TH1D* GetGammaPi0() { return GammaPi0; };
@@ -498,16 +482,18 @@ public:
     TH2D* GetMass2Pions_VS_massOmega_NC(int index) { return mass2Pions_VS_massOmega_NC[index]; };
     TH2D* GetMass2Pions_VS_massOmega_EPC(int index) { return mass2Pions_VS_massOmega_EPC[index]; };
     TH2D* GetMass2Pions_VS_massOmega_EPOC(int index) { return mass2Pions_VS_massOmega_EPOC[index]; };
-    
+
     // mass diferences
     TH2D* GetMassDiff(int index) { return MassDiff[index]; };
     TH2D* GetMsqDiff(int index) { return MsqDiff[index]; };
     TH2D* GetMassDiff_VS_IMOmega(int index, int MDindex) { return MassDiff_VS_IMOmega[index][MDindex]; };
-    
+    TH1D* GetMassDiff_Rotated(int index) { return MassDiff_Rotated[index]; };
+    TH2D* GetMassDiff_VS_IMOmega_Rotated(int index) { return MassDiff_VS_IMOmega_Rotated[index]; };
+
     // Zh vs omega inv. mass
-    TH2D* GetZh_VS_IMOmega(int index) {return Zh_VS_IMOmega[index]; };
+    TH2D* GetIMOmega_VS_Zh(int index) {return IMOmega_VS_Zh[index]; };
     TH2D* GetMassDiff_VS_Zh(int index, int MDindex) { return MassDiff_VS_Zh[index][MDindex]; };
-    
+
     int GetMAX_SECTORS() { return MAX_SECTORS; };
     int GetID_ELECTRON() { return ID_ELECTRON; };
     int GetID_PHOTON() { return ID_PHOTON; };

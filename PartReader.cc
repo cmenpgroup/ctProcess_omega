@@ -3,6 +3,11 @@
 #include <string>
 #include "PartReader.h"
 #include <iostream>
+
+PartReader::PartReader()
+{
+
+}
 PartReader::PartReader(TTree *tree, string branchName)
 {
     b_part = tree->GetBranch(branchName.c_str());
@@ -55,7 +60,7 @@ TLorentzVector PartReader::GetLorentzVector(double mass)
 {
     TLorentzVector TLVect;
     TLVect.SetXYZM(this->Get_Px(),this->Get_Py(),this->Get_Pz(),mass);
-    
+
     return TLVect;
 }
 
@@ -63,7 +68,7 @@ TVector3 PartReader::GetVertex()
 {
     TVector3 Vect;
     Vect.SetXYZ(this->Get_X(),this->Get_Y(),this->Get_Z());
-    
+
     return Vect;
 }
 
@@ -73,9 +78,9 @@ double PartReader::Get_TOF_MassSquared()
     double ret = -99.0;
     double fBeta = this->Get_Beta();
     double fBetaSq = fBeta*fBeta;
-    
+
     if(fBetaSq) ret = this->Get_Mom()*this->Get_Mom()*(1.0-fBetaSq)/fBetaSq;
-    
+
     return ret;
 }
 
@@ -85,10 +90,10 @@ double PartReader::Get_TOF_MassSquared()
 //          fMass = particle mass
 //
 double PartReader::Get_BetaFromMass(double fMass){
-    
+
     double ret = -99.0;
     double fMom = this->Get_Mom();
-    
+
     if(fMom) ret = 1.0/sqrt((fMass*fMass)/(fMom*fMom) + 1.0);
 
     return ret;
@@ -99,11 +104,11 @@ double PartReader::Get_BetaFromMass(double fMass){
 //          fMass = particle mass
 //
 double PartReader::Get_BetaDifference(double fMass){
-    
+
     double ret = -99.0;
     double fBetaFromMass = this->Get_BetaFromMass(fMass);
-    
+
     if(fBetaFromMass!=-99.0) ret = this->Get_Beta() - fBetaFromMass;
-    
+
     return ret;
 }
