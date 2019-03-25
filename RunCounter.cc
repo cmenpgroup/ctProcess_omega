@@ -33,7 +33,8 @@ RunCounter::RunCounter()
     CtrLabel.push_back("Omega ID (NumDetPart)");
     CtrLabel.push_back("Omega ID (ProtonInEvt)");
     CtrLabel.push_back("Omega ID (PartComb)");
-    
+    CtrLabel.push_back("Omega ID (PhiPQ)");
+
     this->Init();
 }
 
@@ -45,7 +46,7 @@ void RunCounter::Init()
 void RunCounter::Increment(string label)
 {
     bool ifound = false;
-    
+
     for(int ii=0; ii<this->Get_nCtrLabel(); ii++){
         if (this->Get_CtrLabel(ii).compare(label)==0) {
             CtrStats[ii]++;
@@ -65,5 +66,3 @@ void RunCounter::Print()
         cout << "("<<(float)this->Get_CtrStats(ii)/(float)this->Get_CtrStats(0)<<")"<< endl;
     }
 }
-
-

@@ -23,7 +23,7 @@ HistManager::HistManager()
 
     LIGHTSPEED = 30.0;
 
-    BEAM_ENERGY = 5.01; // 4.5
+    BEAM_ENERGY = 5.014; // 4.5
 
     MassDiffLabel.push_back("M(#pi^{+} #pi^{-} #gamma #gamma) - M(#pi^{+} #pi^{-}) - M(#gamma #gamma) (GeV/c^{2})");
     MassDiffLabel.push_back("M(#pi^{+} #pi^{-} #gamma #gamma) - M(#pi^{+} #pi^{-}) (GeV/c^{2})");
@@ -108,6 +108,14 @@ void HistManager::BookHist(int inputSim)
     sprintf(hname,"partcomb_omega");
     sprintf(htitle,"Particle Combinations with omega cuts");
     partcomb_omega = new TH1D(hname,htitle, 4310, 11100.5, 54200.5);
+
+    sprintf(hname,"NumPartComb");
+    sprintf(htitle,"Number of Particle Combinations per Event");
+    NumPartComb = new TH1D(hname,htitle, 16, -0.5, 15.5);
+
+    sprintf(hname,"NumPartComb_omega");
+    sprintf(htitle,"Number of Particle Combinations per Event (#omega Cuts)");
+    NumPartComb_omega = new TH1D(hname,htitle, 16, -0.5, 15.5);
 
     sprintf(hname,"q2_VS_theta");
     sprintf(htitle,"Q^{2} vs. 4E_{e'}sin^{2}(0.5*#theta_{e'})");
@@ -494,9 +502,33 @@ void HistManager::BookHist(int inputSim)
 		sprintf(htitle,"Reconstructed Mass of #pi^{0} vs Reconstructed Mass of #omega, %s",myTgt.Get_Label(i).c_str());
 		IM2Photons_VS_IMOmega[i] = new TH2D(hname, htitle, 100, 0, 1., nIMomega, IMomegaLo, IMomegaHi);
 
-        sprintf(hname,"W_VS_IMOmega_AllCuts_%s",myTgt.Get_Label(i).c_str());
-        sprintf(htitle,"W vs Reconstructed Mass of #omega, All Cuts except W, %s",myTgt.Get_Label(i).c_str());
-        W_VS_IMOmega_AllCuts[i] = new TH2D(hname, htitle, 250, 0., 5.0, nIMomega, IMomegaLo, IMomegaHi);
+    sprintf(hname,"W_VS_IMOmega_AllCuts_%s",myTgt.Get_Label(i).c_str());
+    sprintf(htitle,"W vs Reconstructed Mass of #omega, All Cuts except W, %s",myTgt.Get_Label(i).c_str());
+    W_VS_IMOmega_AllCuts[i] = new TH2D(hname, htitle, 250, 0., 5.0, nIMomega, IMomegaLo, IMomegaHi);
+
+    sprintf(hname,"PhiPQ_VS_IMOmega_%s",myTgt.Get_Label(i).c_str());
+    sprintf(htitle,"PhiPQ vs Reconstructed Mass of #omega, %s",myTgt.Get_Label(i).c_str());
+    PhiPQ_VS_IMOmega[i] = new TH2D(hname, htitle, 180, -180., 180., nIMomega, IMomegaLo, IMomegaHi);
+
+    sprintf(hname,"PhiPQ_VS_MassDiff_%s",myTgt.Get_Label(i).c_str());
+    sprintf(htitle,"PhiPQ vs Mass Difference, %s",myTgt.Get_Label(i).c_str());
+    PhiPQ_VS_MassDiff[i] = new TH2D(hname, htitle, 180, -180., 180., nIMomega, IMomegaLo, IMomegaHi);
+
+    sprintf(hname,"IMOmega_PhiPQ_cut_%s",myTgt.Get_Label(i).c_str());
+    sprintf(htitle,"Reconstructed Mass of #omega - #phi_{PQ} Cut, %s",myTgt.Get_Label(i).c_str());
+    IMOmega_PhiPQ_cut[i] = new TH2D(hname, htitle, nIMomega, IMomegaLo, IMomegaHi, 10, -0.5, 9.5);
+
+    sprintf(hname,"IMOmega_PhiPQ_anticut_%s",myTgt.Get_Label(i).c_str());
+    sprintf(htitle,"Reconstructed Mass of #omega - #phi_{PQ} antiCut, %s",myTgt.Get_Label(i).c_str());
+    IMOmega_PhiPQ_anticut[i] = new TH2D(hname, htitle, nIMomega, IMomegaLo, IMomegaHi, 10, -0.5, 9.5);
+
+    sprintf(hname,"MassDiff_PhiPQ_cut_%s",myTgt.Get_Label(i).c_str());
+    sprintf(htitle,"Mass Difference of #omega - #phi_{PQ} Cut, %s",myTgt.Get_Label(i).c_str());
+    MassDiff_PhiPQ_cut[i] = new TH2D(hname, htitle, nIMomega, IMomegaLo, IMomegaHi, 10, -0.5, 9.5);
+
+    sprintf(hname,"MassDiff_PhiPQ_anticut_%s",myTgt.Get_Label(i).c_str());
+    sprintf(htitle,"Mass Difference of #omega - #phi_{PQ} antiCut, %s",myTgt.Get_Label(i).c_str());
+    MassDiff_PhiPQ_anticut[i] = new TH2D(hname, htitle, nIMomega, IMomegaLo, IMomegaHi, 10, -0.5, 9.5);
 
 		sprintf(hname,"Q2_VS_IMOmega_%s",myTgt.Get_Label(i).c_str());
 		sprintf(htitle,"Q2 vs Reconstructed Mass of #omega, %s",myTgt.Get_Label(i).c_str());
@@ -646,9 +678,17 @@ void HistManager::BookHist(int inputSim)
         sprintf(htitle,"Mass Difference, %s",myTgt.Get_Label(i).c_str());
         MassDiff[i] = new TH2D(hname, htitle, nIMomega,IMomegaLo,IMomegaHi, this->Get_nMassDiffLabel(), -0.5, this->Get_nMassDiffLabel()-0.5);
 
+        sprintf(hname,"MassDiff_antiCut_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Mass Difference, AntiCut %s",myTgt.Get_Label(i).c_str());
+        MassDiff_antiCut[i] = new TH2D(hname, htitle, nIMomega,IMomegaLo,IMomegaHi, this->Get_nMassDiffLabel(), -0.5, this->Get_nMassDiffLabel()-0.5);
+
         sprintf(hname,"MsqDiff_%s",myTgt.Get_Label(i).c_str());
         sprintf(htitle,"M^{2} Difference, %s",myTgt.Get_Label(i).c_str());
         MsqDiff[i] = new TH2D(hname, htitle, nIMomega,IMomegaLo,IMomegaHi, this->Get_nMassDiffLabel(), -0.5, this->Get_nMassDiffLabel()-0.5);
+
+        sprintf(hname,"MsqDiff_antiCut_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"M^{2} Difference, AntiCut %s",myTgt.Get_Label(i).c_str());
+        MsqDiff_antiCut[i] = new TH2D(hname, htitle, nIMomega,IMomegaLo,IMomegaHi, this->Get_nMassDiffLabel(), -0.5, this->Get_nMassDiffLabel()-0.5);
 
         sprintf(hname,"MassDiff_Rotated_%s_%i",myTgt.Get_Label(i).c_str(),k);
         sprintf(htitle,"M(#pi^{+} #pi^{-} #gamma #gamma), Rotated, %s",myTgt.Get_Label(i).c_str());
@@ -663,14 +703,27 @@ void HistManager::BookHist(int inputSim)
             sprintf(htitle,"M(#pi^{+} #pi^{-} #gamma #gamma) vs. %s, %s",this->Get_MassDiffLabel(k).c_str(),myTgt.Get_Label(i).c_str());
             MassDiff_VS_IMOmega[i][k] = new TH2D(hname, htitle, nIMomega,IMomegaLo,IMomegaHi, nIMomega,IMomegaLo,IMomegaHi);
 
+            sprintf(hname,"MassDiff_VS_IMOmega_antiCut_%s_%i",myTgt.Get_Label(i).c_str(),k);
+            sprintf(htitle,"M(#pi^{+} #pi^{-} #gamma #gamma) vs. %s, AntiCut %s",this->Get_MassDiffLabel(k).c_str(),myTgt.Get_Label(i).c_str());
+            MassDiff_VS_IMOmega_antiCut[i][k] = new TH2D(hname, htitle, nIMomega,IMomegaLo,IMomegaHi, nIMomega,IMomegaLo,IMomegaHi);
+
             sprintf(hname,"MassDiff_VS_Zh_%s_%i",myTgt.Get_Label(i).c_str(),k);
             sprintf(htitle,"z_{h} vs. %s, %s",this->Get_MassDiffLabel(k).c_str(),myTgt.Get_Label(i).c_str());
             MassDiff_VS_Zh[i][k] = new TH2D(hname, htitle, nZh, ZhLo, ZhHi, nIMomega,IMomegaLo,IMomegaHi);
+
+            sprintf(hname,"MassDiff_VS_Zh_antiCut_%s_%i",myTgt.Get_Label(i).c_str(),k);
+            sprintf(htitle,"z_{h} vs. %s, AntiCut %s",this->Get_MassDiffLabel(k).c_str(),myTgt.Get_Label(i).c_str());
+            MassDiff_VS_Zh_antiCut[i][k] = new TH2D(hname, htitle, nZh, ZhLo, ZhHi, nIMomega,IMomegaLo,IMomegaHi);
+
         }
 
         sprintf(hname,"IMOmega_VS_Zh_%s",myTgt.Get_Label(i).c_str());
         sprintf(htitle,"Reconstructed Mass of #omega vs z_{h}, %s",myTgt.Get_Label(i).c_str());
         IMOmega_VS_Zh[i] = new TH2D(hname, htitle, nZh, ZhLo, ZhHi, nIMomega, IMomegaLo, IMomegaHi);
+
+        sprintf(hname,"IMOmega_VS_Zh_antiCut_%s",myTgt.Get_Label(i).c_str());
+        sprintf(htitle,"Reconstructed Mass of #omega vs z_{h}, AntiCut %s",myTgt.Get_Label(i).c_str());
+        IMOmega_VS_Zh_antiCut[i] = new TH2D(hname, htitle, nZh, ZhLo, ZhHi, nIMomega, IMomegaLo, IMomegaHi);
     }
 
     for(i=0; i < 5; i++) {
@@ -966,6 +1019,18 @@ void HistManager::BookHist(int inputSim)
     sprintf(hname,"mass2Pions_VS_massOmega_EPOC3");
     sprintf(htitle,"IM #pi^{-} #gamma #gamma vs IM #pi^{+} #pi^{-} #gamma #gamma - Electron, Photon, and Omega Cuts");
     mass2Pions_VS_massOmega_EPOC[2] = new TH2D(hname, htitle, 100, 0, 1., nIMomega, IMomegaLo, IMomegaHi);
+
+    sprintf(hname,"mass2Pions_VS_massOmega_NoMesons1");
+    sprintf(htitle,"IM #pi^{+} #pi^{-} vs IM #pi^{+} #pi^{-} #gamma #gamma - No #omega and #eta");
+    mass2Pions_VS_massOmega_NoMesons[0] = new TH2D(hname, htitle, 100, 0, 1., nIMomega, IMomegaLo, IMomegaHi);
+
+    sprintf(hname,"mass2Pions_VS_massOmega_NoMesons2");
+    sprintf(htitle,"IM #pi^{+} #gamma #gamma vs IM #pi^{+} #pi^{-} #gamma #gamma - No #omega and #eta");
+    mass2Pions_VS_massOmega_NoMesons[1] = new TH2D(hname, htitle, 100, 0, 1., nIMomega, IMomegaLo, IMomegaHi);
+
+    sprintf(hname,"mass2Pions_VS_massOmega_NoMesons3");
+    sprintf(htitle,"IM #pi^{-} #gamma #gamma vs IM #pi^{+} #pi^{-} #gamma #gamma - No #omega and #eta");
+    mass2Pions_VS_massOmega_NoMesons[2] = new TH2D(hname, htitle, 100, 0, 1., nIMomega, IMomegaLo, IMomegaHi);
 }
 
 //
@@ -1014,6 +1079,14 @@ void HistManager::WriteHist(string RootFile, int inputSim){
     partcomb_omega->GetXaxis()->SetTitle("Particle Combinations");
     partcomb_omega->GetYaxis()->SetTitle("Counts");
     partcomb_omega->Write();
+
+    NumPartComb->GetXaxis()->SetTitle("Number of Particle Combinations");
+    NumPartComb->GetYaxis()->SetTitle("Counts");
+    NumPartComb->Write();
+
+    NumPartComb_omega->GetXaxis()->SetTitle("Number of Particle Combinations");
+    NumPartComb_omega->GetYaxis()->SetTitle("Counts");
+    NumPartComb_omega->Write();
 
     elecZVert->GetXaxis()->SetTitle("e^{-} Z vertex (cm)");
     elecZVert->GetYaxis()->SetTitle("Counts");
@@ -1298,17 +1371,41 @@ void HistManager::WriteHist(string RootFile, int inputSim){
         W_VS_IMOmega_AllCuts[i]->GetYaxis()->SetTitle("#omega Inv. Mass (GeV/c^{2})");
         W_VS_IMOmega_AllCuts[i]->Write();
 
+        PhiPQ_VS_IMOmega[i]->GetXaxis()->SetTitle("#phi_{PQ} (deg.)");
+        PhiPQ_VS_IMOmega[i]->GetYaxis()->SetTitle("#omega Inv. Mass (GeV/c^{2})");
+        PhiPQ_VS_IMOmega[i]->Write();
+
+        IMOmega_PhiPQ_cut[i]->GetXaxis()->SetTitle("#omega Inv. Mass (GeV/c^{2})");
+        IMOmega_PhiPQ_cut[i]->GetYaxis()->SetTitle("#phi_{PQ} Cut Range");
+        IMOmega_PhiPQ_cut[i]->Write();
+
+        IMOmega_PhiPQ_anticut[i]->GetXaxis()->SetTitle("#omega Inv. Mass (GeV/c^{2})");
+        IMOmega_PhiPQ_anticut[i]->GetYaxis()->SetTitle("#phi_{PQ} Cut Range");
+        IMOmega_PhiPQ_anticut[i]->Write();
+
+        PhiPQ_VS_MassDiff[i]->GetXaxis()->SetTitle("#phi_{PQ} (deg.)");
+        PhiPQ_VS_MassDiff[i]->GetYaxis()->SetTitle("Mass Difference (GeV/c^{2})");
+        PhiPQ_VS_MassDiff[i]->Write();
+
+        MassDiff_PhiPQ_cut[i]->GetXaxis()->SetTitle("Mass Difference (GeV/c^{2})");
+        MassDiff_PhiPQ_cut[i]->GetYaxis()->SetTitle("#phi_{PQ} Cut Range");
+        MassDiff_PhiPQ_cut[i]->Write();
+
+        MassDiff_PhiPQ_anticut[i]->GetXaxis()->SetTitle("Mass Difference (GeV/c^{2})");
+        MassDiff_PhiPQ_anticut[i]->GetYaxis()->SetTitle("#phi_{PQ} Cut Range");
+        MassDiff_PhiPQ_anticut[i]->Write();
+
         Q2_VS_IMOmega[i]->GetXaxis()->SetTitle("Q^{2} (GeV/c)^{2}");
         Q2_VS_IMOmega[i]->GetYaxis()->SetTitle("#omega Inv. Mass (GeV/c^{2})");
         Q2_VS_IMOmega[i]->Write();
 
         Pt_VS_IMOmega[i]->GetXaxis()->SetTitle("Transverse Momentum (GeV/c)");
         Pt_VS_IMOmega[i]->GetYaxis()->SetTitle("#omega Inv. Mass (GeV/c^{2})");
-		Pt_VS_IMOmega[i]->Write();
+        Pt_VS_IMOmega[i]->Write();
 
         Pl_VS_IMOmega[i]->GetXaxis()->SetTitle("Longitudinal Momentum (GeV/c)");
         Pl_VS_IMOmega[i]->GetYaxis()->SetTitle("#omega Inv. Mass (GeV/c^{2})");
-		Pl_VS_IMOmega[i]->Write();
+        Pl_VS_IMOmega[i]->Write();
 
         OpAng_VS_IMOmega[i]->GetXaxis()->SetTitle("Opening Angle between #gamma_{1} and #gamma_{2} (deg.)");
         OpAng_VS_IMOmega[i]->GetYaxis()->SetTitle("#omega Inv. Mass (GeV/c^{2})");
@@ -1316,11 +1413,11 @@ void HistManager::WriteHist(string RootFile, int inputSim){
 
         MissMom[i]->GetXaxis()->SetTitle("Missing Momentum (GeV/c)");
         MissMom[i]->GetYaxis()->SetTitle("Counts");
-		MissMom[i]->Write();
+        MissMom[i]->Write();
 
         MMsq[i]->GetXaxis()->SetTitle("Missing Mass Squared (GeV/c^{2})^{2}");
         MMsq[i]->GetYaxis()->SetTitle("Counts");
-		MMsq[i]->Write();
+        MMsq[i]->Write();
 
         MMsq_MissPi[i]->GetXaxis()->SetTitle("Missing Mass Squared (GeV/c^{2})^{2}");
         MMsq_MissPi[i]->GetYaxis()->SetTitle("Missing Pion");
@@ -1446,9 +1543,17 @@ void HistManager::WriteHist(string RootFile, int inputSim){
         MassDiff[i]->GetYaxis()->SetTitle("Mass Difference Combination");
         MassDiff[i]->Write();
 
+        MassDiff_antiCut[i]->GetXaxis()->SetTitle("Mass Difference (GeV/c^{2})");
+        MassDiff_antiCut[i]->GetYaxis()->SetTitle("Mass Difference Combination");
+        MassDiff_antiCut[i]->Write();
+
         MsqDiff[i]->GetXaxis()->SetTitle("M^{2} Difference (GeV/c^{2})");
         MsqDiff[i]->GetYaxis()->SetTitle("M^{2} Difference Combination");
         MsqDiff[i]->Write();
+
+        MsqDiff_antiCut[i]->GetXaxis()->SetTitle("M^{2} Difference (GeV/c^{2})");
+        MsqDiff_antiCut[i]->GetYaxis()->SetTitle("M^{2} Difference Combination");
+        MsqDiff_antiCut[i]->Write();
 
         MassDiff_Rotated[i]->GetXaxis()->SetTitle("IM + #Delta M (GeV/c^{2})");
         MassDiff_Rotated[i]->GetYaxis()->SetTitle("Counts");
@@ -1463,14 +1568,26 @@ void HistManager::WriteHist(string RootFile, int inputSim){
             MassDiff_VS_IMOmega[i][k]->GetYaxis()->SetTitle(this->Get_MassDiffLabel(k).c_str());
             MassDiff_VS_IMOmega[i][k]->Write();
 
+            MassDiff_VS_IMOmega_antiCut[i][k]->GetXaxis()->SetTitle("M(#pi^{+} #pi^{-} #gamma #gamma) (GeV/c^{2})");
+            MassDiff_VS_IMOmega_antiCut[i][k]->GetYaxis()->SetTitle(this->Get_MassDiffLabel(k).c_str());
+            MassDiff_VS_IMOmega_antiCut[i][k]->Write();
+
             MassDiff_VS_Zh[i][k]->GetXaxis()->SetTitle("z_{h}");
             MassDiff_VS_Zh[i][k]->GetYaxis()->SetTitle(this->Get_MassDiffLabel(k).c_str());
             MassDiff_VS_Zh[i][k]->Write();
+
+            MassDiff_VS_Zh_antiCut[i][k]->GetXaxis()->SetTitle("z_{h}");
+            MassDiff_VS_Zh_antiCut[i][k]->GetYaxis()->SetTitle(this->Get_MassDiffLabel(k).c_str());
+            MassDiff_VS_Zh_antiCut[i][k]->Write();
         }
 
         IMOmega_VS_Zh[i]->GetXaxis()->SetTitle("z_{h}");
         IMOmega_VS_Zh[i]->GetYaxis()->SetTitle("#pi^{+} #pi^{-} #gamma #gamma Inv. Mass (GeV/c^{2})");
         IMOmega_VS_Zh[i]->Write();
+
+        IMOmega_VS_Zh_antiCut[i]->GetXaxis()->SetTitle("z_{h}");
+        IMOmega_VS_Zh_antiCut[i]->GetYaxis()->SetTitle("#pi^{+} #pi^{-} #gamma #gamma Inv. Mass (GeV/c^{2})");
+        IMOmega_VS_Zh_antiCut[i]->Write();
     }
 
     out->cd();
@@ -1896,6 +2013,18 @@ void HistManager::WriteHist(string RootFile, int inputSim){
     mass2Pions_VS_massOmega_EPOC[2]->GetXaxis()->SetTitle("IM #pi^{-} #gamma #gamma (GeV/c^{2})");
     mass2Pions_VS_massOmega_EPOC[2]->GetYaxis()->SetTitle("IM #pi^{+} #pi^{-} #gamma #gamma (GeV/c^{2})");
     mass2Pions_VS_massOmega_EPOC[2]->Write();
+
+    mass2Pions_VS_massOmega_NoMesons[0]->GetXaxis()->SetTitle("IM #pi^{+} #pi^{-} (GeV/c^{2})");
+    mass2Pions_VS_massOmega_NoMesons[0]->GetYaxis()->SetTitle("IM #pi^{+} #pi^{-} #gamma #gamma (GeV/c^{2})");
+    mass2Pions_VS_massOmega_NoMesons[0]->Write();
+
+    mass2Pions_VS_massOmega_NoMesons[1]->GetXaxis()->SetTitle("IM #pi^{+} #gamma #gamma (GeV/c^{2})");
+    mass2Pions_VS_massOmega_NoMesons[1]->GetYaxis()->SetTitle("IM #pi^{+} #pi^{-} #gamma #gamma (GeV/c^{2})");
+    mass2Pions_VS_massOmega_NoMesons[1]->Write();
+
+    mass2Pions_VS_massOmega_NoMesons[2]->GetXaxis()->SetTitle("IM #pi^{-} #gamma #gamma (GeV/c^{2})");
+    mass2Pions_VS_massOmega_NoMesons[2]->GetYaxis()->SetTitle("IM #pi^{+} #pi^{-} #gamma #gamma (GeV/c^{2})");
+    mass2Pions_VS_massOmega_NoMesons[2]->Write();
 
     out->Close();
 }

@@ -20,8 +20,10 @@ class EG2Cuts
     vector<double> RangeWcut;
     vector<double> RangeElecR;
     vector<double> RangeMassOmega;
+    vector<double> RangeMassEta;
+    vector<double> RangePhiPQ;
     vector<double> RangeMassOmega_sb;
-    
+
     int topo_nelec;
     int topo_npim;
     int topo_npip;
@@ -33,7 +35,7 @@ class EG2Cuts
     double dalitzDaughter1Mass;
     double dalitzDaughter2Mass;
     double dalitzDaughter3Mass;
-    
+
     bool cuts_omega_MPi0;
     bool cuts_omega_MPipPim;
     bool cuts_omega_ZDiff_ElecPim;
@@ -50,8 +52,11 @@ class EG2Cuts
     bool cuts_omega_dalitz;
     bool cuts_omega_ProtonInEvt;
     bool cuts_omega_PartComb;
+    bool cuts_omega_PhiPQ;
+    bool cuts_omega_MEta;
+    bool cuts_omega_Mesons;
     bool cuts_omega_All;
-    
+
     bool cuts_omega_woMPi0;
     bool cuts_omega_woMPipPim;
     bool cuts_omega_woZDiff;
@@ -59,11 +64,11 @@ class EG2Cuts
     bool cuts_omega_woOpAng_ElecPhot;
     bool cuts_omega_woNumDetPart;
     bool cuts_omega_woW;
-    
+
 public:
     EG2Cuts();
     int Get_nCuts() {return CutsLabel.size();};
-	string Get_CutsLabel(int num) {return CutsLabel[num];};
+    string Get_CutsLabel(int num) {return CutsLabel[num];};
     double Get_ZDiff_ElecPim_lo() {return RangeZDiff_ElecPim[0];};
     double Get_ZDiff_ElecPim_hi() {return RangeZDiff_ElecPim[1];};
     double Get_ZDiff_ElecPip_lo() {return RangeZDiff_ElecPip[0];};
@@ -82,6 +87,10 @@ public:
     double Get_OpAng_ElecPhoton_hi() {return RangeOpAng_ElecPhoton[1];};
     double Get_ElectronR_lo() {return RangeElecR[0];};
     double Get_ElectronR_hi() {return RangeElecR[1];};
+    double Get_PhiPQ_lo() {return RangePhiPQ[0];};
+    double Get_PhiPQ_hi() {return RangePhiPQ[1];};
+    double Get_MassEta_lo() {return RangeMassEta[0];};
+    double Get_MassEta_hi() {return RangeMassEta[1];};
     double Get_MassOmega_lo() {return RangeMassOmega[0];};
     double Get_MassOmega_hi() {return RangeMassOmega[1];};
     double Get_MassOmega_sb_lo() {return RangeMassOmega_sb[0];};
@@ -104,9 +113,11 @@ public:
     bool Check_NumDetPart(int nElec, int nPim, int nPip, int nGam);
     bool Check_ProtonInEvt(int nProton);
     bool Check_PartComb(int PartComb);
+    bool Check_PhiPQ(int PhiPQ);
     bool Check_ElectronR(double vr);
     bool Check_BetaPhoton(double beta);
     bool Check_MassOmega(double mass);
+    bool Check_MassEta(double mass);
     bool Check_MassOmega_sb(double mass);
     void Print_Cuts();
 
@@ -115,7 +126,7 @@ public:
     void SetDalitz_Parent(double mass) {dalitzParentMass = mass;};
     double GetDalitz_Parent() {return dalitzParentMass;};
     bool Check_Dalitz(double Msq12, double Msq23);
-    
+
     void InitCuts();
     void SetCut_ZDiff_ElecPion(double zdiff, int num);
     bool GetCut_ZDiff_ElecPion(int num);
@@ -141,10 +152,16 @@ public:
     void Set_Evt_PartComb(int PartComb) {evt_partcomb = PartComb;};
     void SetCut_PartComb(int PartComb);
     bool GetCut_PartComb() {return cuts_omega_PartComb;};
+    void SetCut_PhiPQ(int PhiPQ);
+    bool GetCut_PhiPQ() {return cuts_omega_PhiPQ;};
+    void SetCut_MassEta(double mass);
+    bool GetCut_MassEta() {return cuts_omega_MEta;};
     void SetCut_MassOmega(double mass);
     bool GetCut_MassOmega() {return cuts_omega_MPipPimPi0;};
     void SetCut_MassOmega_sb(double mass);
     bool GetCut_MassOmega_sb() {return cuts_omega_MPipPimPi0_sb;};
+    void SetCut_Mesons(double mass);
+    bool GetCut_Mesons() {return cuts_omega_Mesons;};
     void SetCut_OmegaID();
     bool GetCut_OmegaID() {return cuts_omega_All;};
     void SetCut_OmegaID_woMassPi0();

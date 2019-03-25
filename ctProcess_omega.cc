@@ -11,6 +11,10 @@
 int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, bool printCuts, int bMixEvt) {
     int i, ii, j, k, kk;
 
+    int evtNum_old = -1;
+    int numPartComb = 0;
+    int numPartComb_omega = 0;
+
     int Sector_index, Vz_index;
 
     bool cuts_Electron;
@@ -24,6 +28,7 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
     double TwoPhotonAngle, elecPhoton1Angle, elecPhoton2Angle, PairsAngle, chPionAngle;
     double Qsq, nu, Mx, z_fracEnergy, W, yDIS;
     double sinHalfTheta;
+    double phi_pq;
 
     double inPlane_3pions; // check on whether the pi+, pi-, pi0 3-vectors are in the same plane
     double eventStartTime; // event start time from HEAD bank
@@ -127,6 +132,29 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
         photon1Reader.ReadEntry(processed);
         photon2Reader.ReadEntry(processed);
 
+        if(myKineReader.Get_EvtNum()==evtNum_old){
+          numPartComb++;
+        }else{
+          if(evtNum_old>=0){
+            myHistManager.GetNumPartComb()->Fill(numPartComb);
+            myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nElec(), myDetPart.Get_PartIndex("Electron"));
+            myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nPim(), myDetPart.Get_PartIndex("Pi-"));
+            myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nPip(), myDetPart.Get_PartIndex("Pi+"));
+            myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nGam(), myDetPart.Get_PartIndex("Photon1"));
+            myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nProton(), myDetPart.Get_PartIndex("Proton"));
+
+            myHistManager.GetNumPartComb_omega()->Fill(numPartComb_omega);
+//            myHistManager.GetNumDetPart_omega()->Fill(myKineReader.Get_nElec(), myDetPart.Get_PartIndex("Electron"));
+//            myHistManager.GetNumDetPart_omega()->Fill(myKineReader.Get_nPim(), myDetPart.Get_PartIndex("Pi-"));
+//            myHistManager.GetNumDetPart_omega()->Fill(myKineReader.Get_nPip(), myDetPart.Get_PartIndex("Pi+"));
+//            myHistManager.GetNumDetPart_omega()->Fill(myKineReader.Get_nGam(), myDetPart.Get_PartIndex("Photon1"));
+//            myHistManager.GetNumDetPart_omega()->Fill(myKineReader.Get_nProton(), myDetPart.Get_PartIndex("Proton"));
+          }
+
+          evtNum_old = myKineReader.Get_EvtNum();
+          numPartComb = 1;
+          numPartComb_omega = 0;
+        }
 //        eventStartTime = reader.getStartTime(); // evetn start time
 //        myHistManager.GetStartTime()->Fill(eventStartTime);
 
@@ -176,11 +204,6 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
         myHistManager.GetElecZVert_VS_Phi_Corr()->Fill(elec.Phi() * TMath::RadToDeg(),elec_vert_corr.Z()); // fill electron z vertex vs phi histogram
 
         myHistManager.GetPartComb()->Fill(myKineReader.Get_PartComb());
-        myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nElec(), myDetPart.Get_PartIndex("Electron"));
-        myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nPim(), myDetPart.Get_PartIndex("Pi-"));
-        myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nPip(), myDetPart.Get_PartIndex("Pi+"));
-        myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nGam(), myDetPart.Get_PartIndex("Photon1"));
-        myHistManager.GetNumDetPart()->Fill(myKineReader.Get_nProton(), myDetPart.Get_PartIndex("Proton"));
 
         myMixEvt.Clear_TLorentzVectors(); // initialize all particle TLorentzVectors to zero in myMixEvt
         myMixEvt.Put_LorentzVector(photon1Reader.GetLorentzVector(MASS_PHOTON),"Photon1",0);
@@ -827,7 +850,17 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
                         myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),21);
                     }
 
-                    myHistManager.GetIMOmega_VS_Zh(Vz_index)->Fill(z_fracEnergy,Omega.M()); // Omega inv. mass vs z_h
+                    myCuts.SetCut_Mesons(Omega.M()); // set the cut - eta and omega mesons
+                    if(myCuts.GetCut_Mesons()){ // check the cut - eta and omega mesons
+                      myHistManager.GetIM2Photons(Vz_index)->Fill(TwoPhoton.M(),22);
+                      myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),22);
+                    }else{
+                      myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),22);
+                      myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),22);
+                      myHistManager.GetMass2Pions_VS_massOmega_NoMesons(0)->Fill(TwoPion.M(), Omega.M()); //
+                      myHistManager.GetMass2Pions_VS_massOmega_NoMesons(1)->Fill(pipPi0.M(), Omega.M()); //
+                      myHistManager.GetMass2Pions_VS_massOmega_NoMesons(2)->Fill(pimPi0.M(), Omega.M()); //
+                    }
 
                     myMassDiff.ClearMasses(); // initialize masses to zero
                     // set particle masses in the MassDifference object
@@ -850,11 +883,47 @@ int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, 
                     myHistManager.GetMassDiff_Rotated(Vz_index)->Fill(Omega.M()+myMassDiff.Get_MassDiff(myMassDiff.Get_Label(0))); // invariant mass difference
                     myHistManager.GetMassDiff_VS_IMOmega_Rotated(Vz_index)->Fill(Omega.M()+myMassDiff.Get_MassDiff(myMassDiff.Get_Label(0)),myMassDiff.Get_MassDiff(myMassDiff.Get_Label(0))-Omega.M()); // invariant mass difference vs omega invariant mass
 
-                    for(int kk=0; kk<myMassDiff.Get_nLabel(); kk++){
-                      myHistManager.GetMassDiff(Vz_index)->Fill(myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk)),kk); // Invariant mass diferences
-                      myHistManager.GetMsqDiff(Vz_index)->Fill(myMassDiff.Get_MassSqDiff(myMassDiff.Get_Label(kk)),kk); // Invariant mass squared difference
-                      myHistManager.GetMassDiff_VS_IMOmega(Vz_index,kk)->Fill(Omega.M(),myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk))); // invariant mass difference vs omega invariant mass
-                      myHistManager.GetMassDiff_VS_Zh(Vz_index,kk)->Fill(z_fracEnergy,myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk))); // invariant mass difference vs omega invariant mass
+                    phi_pq = Calc_PhiPQ(Omega,BeamMinusElectron); // calculate phi_pq
+                    myHistManager.GetPhiPQ_VS_IMOmega(Vz_index)->Fill(phi_pq, Omega.M()); // variable = phi_pq
+                    myHistManager.GetPhiPQ_VS_MassDiff(Vz_index)->Fill(phi_pq,myMassDiff.Get_MassDiff(myMassDiff.Get_Label(0))); // variable = phi_pq
+
+                    // test various phi_pq cut ranges
+                    for(int iii=0; iii<10; iii++){
+                      if(fabs(phi_pq) >= 20+iii*10){
+                        myHistManager.GetIMOmega_PhiPQ_cut(Vz_index)->Fill(Omega.M(),iii);
+                        myHistManager.GetMassDiff_PhiPQ_cut(Vz_index)->Fill(myMassDiff.Get_MassDiff(myMassDiff.Get_Label(0)),iii);
+                      }else{
+                        myHistManager.GetIMOmega_PhiPQ_anticut(Vz_index)->Fill(Omega.M(),iii);
+                        myHistManager.GetMassDiff_PhiPQ_anticut(Vz_index)->Fill(myMassDiff.Get_MassDiff(myMassDiff.Get_Label(0)),iii);
+                      }
+                    }
+
+                    myCuts.SetCut_PhiPQ(phi_pq); // set the phi_pq cut
+                    if(myCuts.GetCut_PhiPQ()){ // check the phi_pq cut
+                      myCounter.Increment("Omega ID (PhiPQ)");
+                      numPartComb_omega++; // increment the particle combinations counter
+
+                      myHistManager.GetIM2Photons(Vz_index)->Fill(TwoPhoton.M(),23);
+                      myHistManager.GetIMOmega(Vz_index)->Fill(Omega.M(),23);
+                      myHistManager.GetIMOmega_VS_Zh(Vz_index)->Fill(z_fracEnergy,Omega.M()); // Omega inv. mass vs z_h
+
+                      for(int kk=0; kk<myMassDiff.Get_nLabel(); kk++){
+                        myHistManager.GetMassDiff(Vz_index)->Fill(myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk)),kk); // Invariant mass diferences
+                        myHistManager.GetMsqDiff(Vz_index)->Fill(myMassDiff.Get_MassSqDiff(myMassDiff.Get_Label(kk)),kk); // Invariant mass squared difference
+                        myHistManager.GetMassDiff_VS_IMOmega(Vz_index,kk)->Fill(Omega.M(),myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk))); // invariant mass difference vs omega invariant mass
+                        myHistManager.GetMassDiff_VS_Zh(Vz_index,kk)->Fill(z_fracEnergy,myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk))); // invariant mass difference vs omega invariant mass
+                      }
+                    }else{
+                      myHistManager.GetIM2Photons_woCut(Vz_index)->Fill(TwoPhoton.M(),23);
+                      myHistManager.GetIMOmega_antiCut(Vz_index)->Fill(Omega.M(),23);
+                      myHistManager.GetIMOmega_VS_Zh_antiCut(Vz_index)->Fill(z_fracEnergy,Omega.M()); // Omega inv. mass vs z_h
+
+                      for(int kk=0; kk<myMassDiff.Get_nLabel(); kk++){
+                        myHistManager.GetMassDiff_antiCut(Vz_index)->Fill(myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk)),kk); // Invariant mass diferences
+                        myHistManager.GetMsqDiff_antiCut(Vz_index)->Fill(myMassDiff.Get_MassSqDiff(myMassDiff.Get_Label(kk)),kk); // Invariant mass squared difference
+                        myHistManager.GetMassDiff_VS_IMOmega_antiCut(Vz_index,kk)->Fill(Omega.M(),myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk))); // invariant mass difference vs omega invariant mass
+                        myHistManager.GetMassDiff_VS_Zh_antiCut(Vz_index,kk)->Fill(z_fracEnergy,myMassDiff.Get_MassDiff(myMassDiff.Get_Label(kk))); // invariant mass difference vs omega invariant mass
+                      }
                     }
 
                 }else{
@@ -912,6 +981,22 @@ int CheckCut(double var, double LowerLimit, double UpperLimit)
 	int ret = (var >= LowerLimit && var < UpperLimit) ? 1 : 0;
 
 	return ret;
+}
+
+double Calc_PhiPQ(TLorentzVector p, TLorentzVector q)
+{
+  double phi_pq;
+  TVector3 Vpart = p.Vect();
+  TVector3 Vvirt = q.Vect();
+  Double_t phi_z = TMath::Pi()-Vvirt.Phi();
+  Vvirt.RotateZ(phi_z);
+  Vpart.RotateZ(phi_z);
+  TVector3 Vhelp(0.,0.,1.);
+  Double_t phi_y = Vvirt.Angle(Vhelp);
+  Vvirt.RotateY(phi_y);
+  Vpart.RotateY(phi_y);
+  phi_pq=Vpart.Phi() * 180./(TMath::Pi());
+  return phi_pq;
 }
 
 void Fill_EC_Histograms(PartReader Rdr, int ip)

@@ -20,17 +20,19 @@ EG2Cuts::EG2Cuts()
     CutsLabel.push_back("Dalitz");
     CutsLabel.push_back("ProtonInEvt");
     CutsLabel.push_back("PartComb");
+    CutsLabel.push_back("Mesons");
+    CutsLabel.push_back("PhiPQ");
     
     topo_nelec = 1;
     topo_npim = 1;
     topo_npip = 1;
     topo_ngam = 2;
-    
+
     evt_partcomb = 11112; // particle combination of 1st e-, 1st pi+, 1st pi-, 1st photon, and 2nd photon in list
-    
+
     RangeZDiff_ElecPim.push_back(-2.0); // Lower limit on z vertex difference with electron (in cm)
     RangeZDiff_ElecPim.push_back(2.0); // Upper limit on z vertex difference with electron (in cm)
-    
+
     RangeZDiff_ElecPip.push_back(-2.0); // Lower limit on z vertex difference with electron (in cm)
     RangeZDiff_ElecPip.push_back(2.0); // Upper limit on z vertex difference with electron (in cm)
 
@@ -50,16 +52,22 @@ EG2Cuts::EG2Cuts()
 
     RangeMassPipPim.push_back(0.48); // Lower limit on pi+ pi- inv. mass
     RangeMassPipPim.push_back(0.51); // Upper limit on pi+ pi- inv. mass
-    
+
     RangeOpAng_ElecPhoton.push_back(12.0); // Lower limit on opening angle between e- and photon (in degrees)
     RangeOpAng_ElecPhoton.push_back(180.0); // Upper limit on opening angle between e- and photon (in degrees)
 
     RangeMassOmega.push_back(0.7); // Lower limit on omega mass (in Gev/c^2)
     RangeMassOmega.push_back(0.875); // Upper limit on omega mass (in Gev/c^2)
 
+    RangeMassEta.push_back(0.5); // Lower limit on eta mass (in Gev/c^2)
+    RangeMassEta.push_back(0.6); // Upper limit on eta mass (in Gev/c^2)
+
     RangeMassOmega_sb.push_back(0.610); // Lower limit on omega mass lower sideband (in Gev/c^2)
     RangeMassOmega_sb.push_back(0.965); // Upper limit on omega mass upper sideband (in Gev/c^2)
-    
+
+    RangePhiPQ.push_back(-80.0); // Lower limit on phi_pq (in deg.)
+    RangePhiPQ.push_back(80.0); // Upper limit on phi_pq (in deg.)
+
     this->InitCuts();
 }
 
@@ -83,6 +91,9 @@ void EG2Cuts::InitCuts()
     cuts_omega_dalitz = false;
     cuts_omega_ProtonInEvt = false;
     cuts_omega_PartComb = false;
+    cuts_omega_PhiPQ = false;
+    cuts_omega_MEta = false;
+    cuts_omega_Mesons = false;
     cuts_omega_All = false;
 
     cuts_omega_woMPi0 = false;
@@ -99,7 +110,7 @@ void EG2Cuts::InitCuts()
 bool EG2Cuts::Check_ZDiff_ElecPim(double zdiff)
 {
 	bool ret = (zdiff >= this->Get_ZDiff_ElecPim_lo() && zdiff < this->Get_ZDiff_ElecPim_hi()) ? true : false;
-	
+
 	return ret;
 }
 
@@ -107,7 +118,7 @@ bool EG2Cuts::Check_ZDiff_ElecPim(double zdiff)
 bool EG2Cuts::Check_ZDiff_ElecPip(double zdiff)
 {
 	bool ret = (zdiff >= this->Get_ZDiff_ElecPip_lo() && zdiff < this->Get_ZDiff_ElecPip_hi()) ? true : false;
-	
+
 	return ret;
 }
 
@@ -151,7 +162,7 @@ void EG2Cuts::SetCut_ZDiff_ElecPion_All()
 bool EG2Cuts::Check_MassPi0(double mass)
 {
 	bool ret = (mass >= this->Get_MassPi0_lo() && mass < this->Get_MassPi0_hi()) ? true : false;
-	
+
 	return ret;
 }
 
@@ -165,7 +176,7 @@ void EG2Cuts::SetCut_MassPi0(double mass)
 bool EG2Cuts::Check_MassPipPim(double mass)
 {
     bool ret = (mass < this->Get_MassPipPim_lo() || mass > this->Get_MassPipPim_hi()) ? true : false;
-    
+
     return ret;
 }
 
@@ -179,7 +190,7 @@ void EG2Cuts::SetCut_MassPipPim(double mass)
 bool EG2Cuts::Check_QSquared(double Qsq)
 {
 	bool ret = (Qsq >= this->Get_QSquared_lo() && Qsq < this->Get_QSquared_hi()) ? true : false;
-	
+
 	return ret;
 }
 
@@ -193,7 +204,7 @@ void EG2Cuts::SetCut_QSquared(double Qsq)
 bool EG2Cuts::Check_OpAng_ElecPhoton(double OpAng)
 {
 	bool ret = (OpAng >= this->Get_OpAng_ElecPhoton_lo() && OpAng < this->Get_OpAng_ElecPhoton_hi()) ? true : false;
-	
+
 	return ret;
 }
 
@@ -237,7 +248,7 @@ void EG2Cuts::SetCut_OpAng_ElecPhoton_All()
 bool EG2Cuts::Check_Wcut(double W)
 {
     bool ret = (W >= this->Get_Wcut_lo() && W < this->Get_Wcut_hi()) ? true : false;
-    
+
     return ret;
 }
 
@@ -254,9 +265,9 @@ bool EG2Cuts::Check_NumDetPart(int nElec, int nPim, int nPip, int nGam)
     bool check_pim = (nPim == this->Get_Topo_nPim());
     bool check_pip = (nPip == this->Get_Topo_nPip());
     bool check_gam = (nGam == this->Get_Topo_nGam());
-    
+
     bool ret = (check_elec && check_pim && check_pip && check_gam) ? true : false;
-    
+
     return ret;
 }
 
@@ -270,7 +281,7 @@ void EG2Cuts::SetCut_NumDetPart(int nElec, int nPim, int nPip, int nGam)
 bool EG2Cuts::Check_ProtonInEvt(int nProton)
 {
     bool ret = (nProton > 0) ? true : false;
-    
+
     return ret;
 }
 
@@ -284,7 +295,7 @@ void EG2Cuts::SetCut_ProtonInEvt(int nProton)
 bool EG2Cuts::Check_PartComb(int PartComb)
 {
     bool ret = (PartComb==this->Get_Evt_PartComb()) ? true : false;
-    
+
     return ret;
 }
 
@@ -294,11 +305,45 @@ void EG2Cuts::SetCut_PartComb(int PartComb)
     cuts_omega_PartComb = this->Check_PartComb(PartComb);
 }
 
+// check the cut for phi_pq
+bool EG2Cuts::Check_PhiPQ(int PhiPQ)
+{
+    bool ret = (PhiPQ <= this->Get_PhiPQ_lo() || PhiPQ >= this->Get_PhiPQ_hi()) ? true : false;
+
+    return ret;
+}
+
+// set the value of the cut for phi_pq
+void EG2Cuts::SetCut_PhiPQ(int PhiPQ)
+{
+    cuts_omega_PhiPQ = this->Check_PhiPQ(PhiPQ);
+}
+
+// set the value of the omega mass cut
+void EG2Cuts::SetCut_Mesons(double mass)
+{
+    cuts_omega_Mesons = (this->Check_MassEta(mass) || this->Check_MassOmega(mass));
+}
+
+// check the cut on eta mass
+bool EG2Cuts::Check_MassEta(double mass)
+{
+	bool ret = (mass >= this->Get_MassEta_lo() && mass < this->Get_MassEta_hi()) ? true : false;
+
+	return ret;
+}
+
+// set the value of the omega mass cut
+void EG2Cuts::SetCut_MassEta(double mass)
+{
+    cuts_omega_MEta = this->Check_MassEta(mass);
+}
+
 // check the cut on omega mass
 bool EG2Cuts::Check_MassOmega(double mass)
 {
 	bool ret = (mass >= this->Get_MassOmega_lo() && mass < this->Get_MassOmega_hi()) ? true : false;
-	
+
 	return ret;
 }
 
@@ -316,9 +361,9 @@ bool EG2Cuts::Check_MassOmega_sb(double mass)
 
     lower_sb = (mass >= this->Get_MassOmega_sb_lo() && mass < this->Get_MassOmega_lo());
     upper_sb = (mass >= this->Get_MassOmega_hi() && mass < this->Get_MassOmega_sb_hi());
-    
+
     bool ret = (lower_sb || upper_sb) ? true : false;
-    
+
     return ret;
 }
 
@@ -360,41 +405,41 @@ double EG2Cuts::GetDalitz_Daughter(int index)
 bool EG2Cuts::Check_Dalitz(double Msq12, double Msq23)
 {
     bool ret;
-    
+
     double Mparent = this->GetDalitz_Parent();
     double Mdaughter1 = this->GetDalitz_Daughter(1);
     double Mdaughter2 = this->GetDalitz_Daughter(2);
     double Mdaughter3 = this->GetDalitz_Daughter(3);
- 
+
     double Msq12_Lo = (Mdaughter1 + Mdaughter2)*(Mdaughter1 + Mdaughter2);
     double Msq12_Hi = (Mparent - Mdaughter3)*(Mparent - Mdaughter3);
     double Msq23_Lo = (Mdaughter2 + Mdaughter3)*(Mdaughter2 + Mdaughter3);
     double Msq23_Hi = (Mparent - Mdaughter1)*(Mparent - Mdaughter1);
-    
+
     bool Msq12_Limits = ((Msq12>= Msq12_Lo) && (Msq12< Msq12_Hi));
     bool Msq23_Limits = ((Msq23>= Msq23_Lo) && (Msq23< Msq23_Hi));
-    
+
     if (Msq12_Limits && Msq23_Limits) {
         double Msq = Mparent*Mparent;
         double Msq1 = Mdaughter1*Mdaughter1;
         double Msq2 = Mdaughter2*Mdaughter2;
         double Msq3 = Mdaughter3*Mdaughter3;
-    
+
         double E2 = (Msq12 - Msq1 + Msq2)/(2.0*sqrt(Msq12));
         double E3 = (Msq - Msq12 - Msq3)/(2.0*sqrt(Msq12));
-    
+
         double Esum = E2 + E3;
-    
+
         double EdiffMin = sqrt(E2*E2 - Msq2) + sqrt(E3*E3 - Msq3);
         double EdiffMax = sqrt(E2*E2 - Msq2) - sqrt(E3*E3 - Msq3);
-    
+
         bool min = (Msq23 >= (Esum*Esum -  EdiffMin*EdiffMin)) ? true : false;
         bool max = (Msq23 < (Esum*Esum -  EdiffMax*EdiffMax)) ? true : false;
         ret = (min && max);
     }else{
         ret = false;
     }
-    
+
     return ret;
 }
 
@@ -458,7 +503,7 @@ void EG2Cuts::Print_Cuts()
 	int ii;
     cout<<"EG2 Cut Info"<<endl;
     cout<<"========================="<<endl;
-    
+
     for(ii=0;ii<this->Get_nCuts();ii++){
         cout << this->Get_CutsLabel(ii) << "\t";
         if (this->Get_CutsLabel(ii).compare("ZDiff_Electron_PiMinus")==0) {
@@ -479,6 +524,8 @@ void EG2Cuts::Print_Cuts()
             cout << "[" << this->Get_OpAng_ElecPhoton_lo() << "," << this->Get_OpAng_ElecPhoton_hi() << "] (deg.)" << endl;
         }else if (this->Get_CutsLabel(ii).compare("ElectronR")==0) {
             cout << "[" << this->Get_ElectronR_lo() << "," << this->Get_ElectronR_hi() << "] (cm)" << endl;
+        }else if (this->Get_CutsLabel(ii).compare("PhiPQ")==0) {
+              cout << "[" << this->Get_PhiPQ_lo() << "," << this->Get_PhiPQ_hi() << "] (deg.)" << endl;
         }else if (this->Get_CutsLabel(ii).compare("MassOmega")==0) {
             cout << "[" << this->Get_MassOmega_lo() << "," << this->Get_MassOmega_hi() << "] (GeV/c^2)" << endl;
         }else if (this->Get_CutsLabel(ii).compare("MassOmega_sideband")==0) {

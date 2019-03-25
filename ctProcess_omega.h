@@ -41,6 +41,7 @@ bool Analyze_PipPim(PartReader pimReader, PartReader pipReader, bool bPlot);
 bool Analyze_Photons(PartReader photon1Reader, PartReader photon2Reader, int iSim, bool bPlot);
 bool Analyze_Electron(PartReader elecReader, double Qsq, double targMass, int iSim, bool bPlot);
 int GetSectorByPhi(double phi_rad);
+double Calc_PhiPQ(TLorentzVector p, TLorentzVector q);
 int process (string inFile, int MaxEvents, int dEvents, int targMass, int iSim, bool printCuts, int bMixEvt);
 void PrintUsage(char *processName);
 void PrintAnalysisTime(float tStart, float tStop);
